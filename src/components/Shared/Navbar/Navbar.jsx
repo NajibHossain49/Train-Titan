@@ -5,12 +5,13 @@ import {
   Home,
   BookOpen,
   PlusCircle,
-  FileText,
   LogOut,
   Menu,
   User,
   Globe,
   X,
+  LayoutDashboard,
+  MessageCircle,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -23,37 +24,49 @@ const Navbar = () => {
     logOut();
   };
 
-  const NavLinks = [
+  // Base navigation links that are always visible
+  const baseNavLinks = [
     {
       path: "/",
       label: "Home",
       icon: <Home className="mr-2" size={20} />,
     },
     {
-      path: "/All-Books",
-      label: "All Books",
+      path: "/allTrainer",
+      label: "All Trainer",
       icon: <Globe className="mr-2" size={20} />,
     },
     {
-      path: "/Add-Book",
-      label: "Add Book",
+      path: "/allClasses",
+      label: "All Classes",
       icon: <PlusCircle className="mr-2" size={20} />,
-      protected: true,
     },
     {
-      path: "/Borrowed-Books",
-      label: "Borrowed-Books",
-      icon: <FileText className="mr-2" size={20} />,
-      protected: true,
+      path: "/community",   
+      label: "Community",
+      icon: <MessageCircle className="mr-2" size={20} />,  
     },
   ];
 
-  // Filter nav links based on user authentication
-  // const displayedNavLinks = NavLinks.filter(link => !link.protected || user);
-  const displayedNavLinks = user ? NavLinks : [];
+  // Additional links for logged-in users
+  const authenticatedLinks = [
+    {
+      path: "/dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard className="mr-2" size={20} />,
+    },
+    {
+      path: "/profile",    
+      label: "User Profile",
+      icon: <User className="mr-2" size={20} />, 
+    },
+  ];
+
+  // Combine links based on authentication status
+  const NavLinks = user ? [...baseNavLinks, ...authenticatedLinks] : baseNavLinks;
 
   return (
-    <nav className="bg-gradient-to-r from-blue-100 via-purple-100 to-indigo-200 shadow-md fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-gradient-to-r from-blue-100 via-purple-100 to-indigo-200 shadow-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Decorative Wave Background */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 opacity-80"></div>
@@ -66,14 +79,14 @@ const Navbar = () => {
                 <BookOpen className="text-white" size={24} />
               </div>
               <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:from-indigo-500 group-hover:to-purple-600 transition-colors duration-500">
-                TrainTitan
+                Train-Titan
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation (Large Screens) */}
           <div className="hidden lg:flex space-x-4 items-center">
-            {displayedNavLinks.map((link) => (
+            {NavLinks.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
@@ -127,11 +140,11 @@ const Navbar = () => {
                   Login
                 </Link>
                 <Link
-                  to="/signup"
+                  to="/Signup"
                   className="text-white bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 px-4 py-2 rounded-full flex items-center transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
                 >
                   <PlusCircle className="mr-2" size={20} />
-                  signup
+                  SignUp
                 </Link>
               </div>
             )}
@@ -151,8 +164,9 @@ const Navbar = () => {
 
       {/* Slide-out Menu for MD and Smaller Screens */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="h-full overflow-y-auto pb-20">
           <div className="px-4 pt-6">
@@ -177,26 +191,23 @@ const Navbar = () => {
                   <BookOpen className="text-white" size={24} />
                 </div>
                 <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">
-                  TrainTitan
+                  Train-Titan
                 </span>
               </Link>
             </div>
 
             {/* Navigation Links */}
             <div className="space-y-2">
-              {displayedNavLinks.map((link) => (
-                <NavLink
+              {NavLinks.map((link) => (
+                <Link
                   key={link.path}
                   to={link.path}
-                  className={({ isActive }) =>
-                    `text-gray-800 hover:bg-blue-50 block px-4 py-3 rounded-lg flex items-center text-lg transition-colors duration-200 ${isActive ? "bg-blue-50 text-blue-600" : ""
-                    }`
-                  }
+                  className="text-gray-800 hover:bg-blue-50 block px-4 py-3 rounded-lg flex items-center text-lg transition-colors duration-200"
                   onClick={toggleMenu}
                 >
                   {link.icon}
                   <span className="ml-3">{link.label}</span>
-                </NavLink>
+                </Link>
               ))}
             </div>
 
@@ -240,11 +251,11 @@ const Navbar = () => {
                     Login
                   </Link>
                   <Link
-                    to="/signup"
+                    to="/Signup"
                     className="block w-full text-center text-white bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 px-4 py-3 rounded-full"
                     onClick={toggleMenu}
                   >
-                    signUp
+                    SignUp
                   </Link>
                 </div>
               )}
@@ -252,14 +263,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Overlay for Mobile Menu */}
-      {isMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={toggleMenu}
-        ></div>
-      )}
     </nav>
   );
 };
