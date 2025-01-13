@@ -8,7 +8,8 @@ import AllTrainer from '../pages/AllTrainer/allTrainer';
 import AllClasses from '../pages/AllClasses/allClasses'; 
 import Dashboard from '../pages/Dashboard/dashboard';
 import Community from '../pages/Community/Community';   
-import Profile from '../pages/Profile/Profile';         
+import Profile from '../pages/Profile/Profile';
+import BecomeTrainer from '../pages/BecomeTrainer/BecomeTrainer';         
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,12 @@ export const router = createBrowserRouter([
         path: '/profile',    
         element: <Profile />,
       },
+
+      {
+        path: '/becomeTrainer',    
+        element: <BecomeTrainer />,
+      },
+
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <SignUp /> },
     ],
