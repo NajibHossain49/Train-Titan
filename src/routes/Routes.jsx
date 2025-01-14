@@ -17,6 +17,7 @@ import NewsletterSubscribers from '../pages/DashboardPages/Admin/newsletterSubsc
 import AppliedTrainer from '../pages/DashboardPages/Admin/appliedTrainer';
 import AppliedTrainerDetails from '../pages/DashboardPages/Admin/AppliedTrainerDetails';
 import AllApprovedTrainer from '../pages/DashboardPages/Admin/allApprovedTrainers';
+import AddNewSlot from '../pages/DashboardPages/Trainer/addNewSlot';
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +92,10 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/allApprovedTrainers',
         element: <AllApprovedTrainer />,
+      },
+      {
+        path: '/dashboard/addNewSlot',
+        element: <AddNewSlot/>,
       }
 
 
