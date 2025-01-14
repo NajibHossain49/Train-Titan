@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 const Sidebar = () => {
   const menuItems = [
     { name: 'All Newsletter Subscribers', path: '/dashboard/newsletter-subscribers' },
-    { name: 'All Trainers', path: '/dashboard/trainers' },
+    { name: 'All Trainers', path: '/dashboard/allApprovedTrainers' },
     { name: 'Applied Trainer', path: '/dashboard/applied-trainer' },
     { name: 'Balance', path: '/dashboard/balance' },
     { name: 'Add New Class', path: '/dashboard/AddNewClass' },

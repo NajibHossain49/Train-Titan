@@ -16,6 +16,7 @@ import AddNewClass from '../pages/DashboardPages/Admin/AddNewClass';
 import NewsletterSubscribers from '../pages/DashboardPages/Admin/newsletterSubscribers';
 import AppliedTrainer from '../pages/DashboardPages/Admin/appliedTrainer';
 import AppliedTrainerDetails from '../pages/DashboardPages/Admin/AppliedTrainerDetails';
+import AllApprovedTrainer from '../pages/DashboardPages/Admin/allApprovedTrainers';
 
 export const router = createBrowserRouter([
   {
@@ -86,6 +87,12 @@ export const router = createBrowserRouter([
         path: '/dashboard/applied-trainer/:id',
         element: <AppliedTrainerDetails />,
       }
+      ,
+      {
+        path: '/dashboard/allApprovedTrainers',
+        element: <AllApprovedTrainer />,
+      }
+
 
     ],
   },
