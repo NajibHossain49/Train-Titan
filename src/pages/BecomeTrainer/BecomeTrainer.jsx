@@ -6,17 +6,21 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
 const BecomeTrainer = () => {
-    const { user } = useAuth(); // Get user from useAuth
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
 
-    // Prefill form data with user info
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         age: '',
+        yearsOfExperience: '',
         profileImage: null,
+        socialLinks: {
+            facebook: '',
+            instagram: ''
+        },
         skills: {
             weightTraining: false,
             cardio: false,
@@ -31,13 +35,12 @@ const BecomeTrainer = () => {
         status: 'pending',
     });
 
-    // Update formData when the user data is available
     useEffect(() => {
         if (user) {
             setFormData((prev) => ({
                 ...prev,
-                fullName: user.displayName || '', // Use `displayName` for full name
-                email: user.email || '', // Use `email` for email
+                fullName: user.displayName || '',
+                email: user.email || '',
             }));
         }
     }, [user]);
@@ -107,6 +110,7 @@ const BecomeTrainer = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Validation checks
         if (!formData.profileImage) {
             Swal.fire({
                 icon: 'error',
@@ -130,6 +134,15 @@ const BecomeTrainer = () => {
                 icon: 'error',
                 title: 'Available Days Required',
                 text: 'Please select your available days.',
+            });
+            return;
+        }
+
+        if (!formData.yearsOfExperience) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Years of Experience Required',
+                text: 'Please enter your years of experience.',
             });
             return;
         }
@@ -206,6 +219,23 @@ const BecomeTrainer = () => {
                     />
                 </div>
 
+                {/* Years of Experience */}
+                <div>
+                    <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-2">
+                        Years of Experience
+                    </label>
+                    <input
+                        id="yearsOfExperience"
+                        type="number"
+                        value={formData.yearsOfExperience}
+                        onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
+                        required
+                        min="0"
+                        step="1"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                </div>
+
                 {/* Profile Image */}
                 <div>
                     <label htmlFor="profileImage" className="block text-sm font-medium text-gray-700 mb-2">
@@ -219,6 +249,51 @@ const BecomeTrainer = () => {
                         className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                     {imagePreview && <img src={imagePreview} alt="Preview" className="mt-4 w-32 h-32 rounded-full" />}
+                </div>
+
+                {/* Social Links */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Social Links</label>
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="facebook" className="block text-sm text-gray-600 mb-1">
+                                Facebook Profile URL
+                            </label>
+                            <input
+                                id="facebook"
+                                type="url"
+                                value={formData.socialLinks.facebook}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    socialLinks: {
+                                        ...formData.socialLinks,
+                                        facebook: e.target.value
+                                    }
+                                })}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="https://facebook.com/your.profile"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="instagram" className="block text-sm text-gray-600 mb-1">
+                                Instagram Profile URL
+                            </label>
+                            <input
+                                id="instagram"
+                                type="url"
+                                value={formData.socialLinks.instagram}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    socialLinks: {
+                                        ...formData.socialLinks,
+                                        instagram: e.target.value
+                                    }
+                                })}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="https://instagram.com/your.profile"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Skills */}
@@ -271,13 +346,13 @@ const BecomeTrainer = () => {
                     />
                 </div>
 
-
                 {/* Submit Button */}
                 <div>
                     <button
                         type="submit"
-                        className={`w-full px-4 py-2 text-white font-medium rounded-md ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                            }`}
+                        className={`w-full px-4 py-2 text-white font-medium rounded-md ${
+                            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
                         disabled={loading}
                     >
                         {loading ? 'Submitting...' : 'Submit Application'}

@@ -4,12 +4,13 @@ import Home from '../pages/Home/Home';
 import ErrorPage from '../pages/ErrorPage';
 import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
-import AllTrainer from '../pages/AllTrainer/allTrainer'; 
-import AllClasses from '../pages/AllClasses/allClasses'; 
+import AllTrainer from '../pages/AllTrainer/allTrainer';
+import AllClasses from '../pages/AllClasses/allClasses';
 import Dashboard from '../pages/Dashboard/dashboard';
-import Community from '../pages/Community/Community';   
+import Community from '../pages/Community/Community';
 import Profile from '../pages/Profile/Profile';
-import BecomeTrainer from '../pages/BecomeTrainer/BecomeTrainer';         
+import BecomeTrainer from '../pages/BecomeTrainer/BecomeTrainer';
+import TrainerDetails from '../pages/TrainerDetails/TrainerDetails';
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,11 @@ export const router = createBrowserRouter([
         element: <AllTrainer />,
       },
       {
+        path: '/trainer/:id',
+        element: <TrainerDetails />,
+      },
+
+      {
         path: '/allClasses',
         element: <AllClasses />,
       },
@@ -34,16 +40,16 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: '/community',  
+        path: '/community',
         element: <Community />,
       },
       {
-        path: '/profile',    
+        path: '/profile',
         element: <Profile />,
       },
 
       {
-        path: '/becomeTrainer',    
+        path: '/becomeTrainer',
         element: <BecomeTrainer />,
       },
 
