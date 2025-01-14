@@ -29,7 +29,6 @@ const TrainerDetails = () => {
     fetchTrainerDetails();
   }, [id]);
 
-  // Helper function to get active skills
   const getActiveSkills = (skills) => {
     return Object.entries(skills || {})
       .filter(([_, value]) => value === true)
@@ -111,7 +110,9 @@ const TrainerDetails = () => {
 
               <div>
                 <p className="font-semibold text-gray-700">Available Time:</p>
-                <p className="text-gray-600 mt-1">{trainer?.availableTime} hours per session</p>
+                <p className="text-gray-600 mt-1">
+                  Available in the {trainer?.timeSlot} for {trainer?.sessionDuration} hours
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -171,7 +172,9 @@ const TrainerDetails = () => {
               >
                 <div className="space-y-1">
                   <p className="font-semibold">{day.label}</p>
-                  <p className="text-sm">Available for {trainer.availableTime} hours</p>
+                  <p className="text-sm">
+                    Available in the {trainer.timeSlot} for {trainer.sessionDuration} hours
+                  </p>
                 </div>
               </button>
             ))}

@@ -38,9 +38,8 @@ const AllTrainer = () => {
               width: "300px",
             }}
           >
-            {/* Profile Image */}
             <img
-              src={trainer.profileImage}
+              src={trainer.profileImage || "/fallback-image.png"}
               alt={trainer.fullName}
               style={{
                 width: "100%",
@@ -49,32 +48,32 @@ const AllTrainer = () => {
                 borderRadius: "8px",
               }}
             />
-            {/* Trainer Info */}
             <h2>{trainer.fullName}</h2>
             <p>Years of Experience: {trainer.yearsOfExperience}</p>
-            {/* Social Links */}
+            {/* <p style={{ color: trainer.status === "pending" ? "orange" : "green" }}>
+              Status: {trainer.status}
+            </p> */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-              {trainer.socialLinks.facebook && (
+              {trainer.socialLinks?.facebook && (
                 <a href={trainer.socialLinks.facebook} target="_blank" rel="noopener noreferrer">
                   <img src="/icons/facebook.png" alt="Facebook" style={{ width: "24px" }} />
                 </a>
               )}
-              {trainer.socialLinks.instagram && (
+              {trainer.socialLinks?.instagram && (
                 <a href={trainer.socialLinks.instagram} target="_blank" rel="noopener noreferrer">
                   <img src="/icons/instagram.png" alt="Instagram" style={{ width: "24px" }} />
                 </a>
               )}
             </div>
-            {/* Available Slots */}
             <h3>Available Slots</h3>
             <ul style={{ padding: "0", listStyle: "none", marginBottom: "10px" }}>
               {trainer.availableDays.map((day) => (
                 <li key={day.value} style={{ marginBottom: "5px" }}>
-                  {day.label} at {trainer.availableTime}:00
+                  {day.label} in the {trainer.timeSlot}
                 </li>
               ))}
             </ul>
-            {/* Know More Button */}
+            <p>Session Duration: {trainer.sessionDuration} hours</p>
             <button
               onClick={() => handleKnowMore(trainer._id)}
               style={{

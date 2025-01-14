@@ -31,19 +31,18 @@ const BecomeTrainer = () => {
             martialArts: false,
         },
         availableDays: [],
-        availableTime: '',
+        timeSlot: '',
+        sessionDuration: '', // Add this field
+        certificationNumber: '',
         status: 'pending',
     });
 
-    useEffect(() => {
-        if (user) {
-            setFormData((prev) => ({
-                ...prev,
-                fullName: user.displayName || '',
-                email: user.email || '',
-            }));
-        }
-    }, [user]);
+    // Time slot options
+    const timeSlotOptions = [
+        { value: 'morning', label: 'Morning (6 AM - 12 PM)' },
+        { value: 'afternoon', label: 'Afternoon (12 PM - 5 PM)' },
+        { value: 'evening', label: 'Evening (5 PM - 10 PM)' }
+    ];
 
     const daysOptions = [
         { value: 'sunday', label: 'Sunday' },
@@ -64,6 +63,16 @@ const BecomeTrainer = () => {
         { id: 'crossFit', label: 'CrossFit' },
         { id: 'martialArts', label: 'Martial Arts' },
     ];
+
+    useEffect(() => {
+        if (user) {
+            setFormData((prev) => ({
+                ...prev,
+                fullName: user.displayName || '',
+                email: user.email || '',
+            }));
+        }
+    }, [user]);
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
@@ -111,6 +120,33 @@ const BecomeTrainer = () => {
         e.preventDefault();
 
         // Validation checks
+        if (!formData.timeSlot) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Time Slot Required',
+                text: 'Please select your preferred time slot.',
+            });
+            return;
+        }
+
+        if (!formData.sessionDuration) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Session Duration Required',
+                text: 'Please enter your session duration.',
+            });
+            return;
+        }
+
+        if (!formData.certificationNumber) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Certification Number Required',
+                text: 'Please enter your certification/license number.',
+            });
+            return;
+        }
+
         if (!formData.profileImage) {
             Swal.fire({
                 icon: 'error',
@@ -328,21 +364,55 @@ const BecomeTrainer = () => {
                     />
                 </div>
 
-                {/* Available Time */}
+                {/* Time Slot */}
                 <div>
-                    <label htmlFor="availableTime" className="block text-sm font-medium text-gray-700 mb-2">
-                        Available Time (in hours)
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Preferred Time Slot
+                    </label>
+                    <Select
+                        options={timeSlotOptions}
+                        value={timeSlotOptions.find(option => option.value === formData.timeSlot)}
+                        onChange={(selected) => {
+                            setFormData({
+                                ...formData,
+                                timeSlot: selected.value
+                            });
+                        }}
+                        className="w-full"
+                    />
+                </div>
+
+                {/* Session Duration */}
+<div>
+    <label htmlFor="sessionDuration" className="block text-sm font-medium text-gray-700 mb-2">
+        Session Duration (hours)
+    </label>
+    <input
+        id="sessionDuration"
+        type="number"
+        min="1"
+        max="12"
+        value={formData.sessionDuration}
+        onChange={(e) => setFormData({ ...formData, sessionDuration: e.target.value })}
+        required
+        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Enter session duration in hours"
+    />
+</div>
+
+                {/* Certification Number */}
+                <div>
+                    <label htmlFor="certificationNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                        Certification/License Number
                     </label>
                     <input
-                        id="availableTime"
-                        type="number"
-                        value={formData.availableTime}
-                        onChange={(e) => setFormData({ ...formData, availableTime: e.target.value })}
+                        id="certificationNumber"
+                        type="text"
+                        value={formData.certificationNumber}
+                        onChange={(e) => setFormData({ ...formData, certificationNumber: e.target.value })}
                         required
-                        min="1"
-                        step="1"
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter hours only"
+                        placeholder="Enter your certification or license number"
                     />
                 </div>
 

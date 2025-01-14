@@ -6,11 +6,14 @@ import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
 import AllTrainer from '../pages/AllTrainer/allTrainer';
 import AllClasses from '../pages/AllClasses/allClasses';
-import Dashboard from '../pages/Dashboard/dashboard';
+import DashboardLayout from '../layouts/DashboardLayout'
 import Community from '../pages/Community/Community';
 import Profile from '../pages/Profile/Profile';
 import BecomeTrainer from '../pages/BecomeTrainer/BecomeTrainer';
 import TrainerDetails from '../pages/TrainerDetails/TrainerDetails';
+import TrainerBooked from '../pages/TrainerBooked/TrainerBooked';
+import AddNewClass from '../pages/DashboardPages/Admin/AddNewClass';
+import NewsletterSubscribers from '../pages/DashboardPages/Admin/newsletterSubscribers';
 
 export const router = createBrowserRouter([
   {
@@ -30,15 +33,17 @@ export const router = createBrowserRouter([
         path: '/trainer/:id',
         element: <TrainerDetails />,
       },
+      {
+        path: '/TrainerBooked',
+        element: <TrainerBooked />,
+
+      },
 
       {
         path: '/allClasses',
         element: <AllClasses />,
       },
-      {
-        path: '/dashboard',
-        element: <Dashboard />,
-      },
+      
       {
         path: '/community',
         element: <Community />,
@@ -55,6 +60,22 @@ export const router = createBrowserRouter([
 
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <SignUp /> },
+    ],
+
+  },
+
+  {
+    path: '/dashboard',
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: '/dashboard/AddNewClass', 
+        element: <AddNewClass />,
+      },
+      {
+        path: '/dashboard/newsletter-subscribers',  
+        element: <NewsletterSubscribers />,
+      },
     ],
   },
 ]);
