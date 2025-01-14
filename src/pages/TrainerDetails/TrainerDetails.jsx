@@ -13,7 +13,7 @@ const TrainerDetails = () => {
     const fetchTrainerDetails = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/trainers/${id}`
+          `${import.meta.env.VITE_API_URL}/approvedTrainers/${id}`
         );
         if (response.data.success) {
           setTrainer(response.data.trainer);

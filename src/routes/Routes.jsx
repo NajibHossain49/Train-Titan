@@ -14,6 +14,8 @@ import TrainerDetails from '../pages/TrainerDetails/TrainerDetails';
 import TrainerBooked from '../pages/TrainerBooked/TrainerBooked';
 import AddNewClass from '../pages/DashboardPages/Admin/AddNewClass';
 import NewsletterSubscribers from '../pages/DashboardPages/Admin/newsletterSubscribers';
+import AppliedTrainer from '../pages/DashboardPages/Admin/appliedTrainer';
+import AppliedTrainerDetails from '../pages/DashboardPages/Admin/AppliedTrainerDetails';
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +45,7 @@ export const router = createBrowserRouter([
         path: '/allClasses',
         element: <AllClasses />,
       },
-      
+
       {
         path: '/community',
         element: <Community />,
@@ -69,13 +71,22 @@ export const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
-        path: '/dashboard/AddNewClass', 
+        path: '/dashboard/AddNewClass',
         element: <AddNewClass />,
       },
       {
-        path: '/dashboard/newsletter-subscribers',  
+        path: '/dashboard/newsletter-subscribers',
         element: <NewsletterSubscribers />,
       },
+      {
+        path: '/dashboard/applied-trainer',
+        element: <AppliedTrainer />,
+      },
+      {
+        path: '/dashboard/applied-trainer/:id',
+        element: <AppliedTrainerDetails />,
+      }
+
     ],
   },
 ]);
