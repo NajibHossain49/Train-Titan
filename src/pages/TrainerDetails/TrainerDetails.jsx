@@ -168,7 +168,7 @@ const TrainerDetails = () => {
               <button
                 key={index}
                 className="w-full p-4 rounded-lg text-left bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-                onClick={() => navigate(`/booking/${trainer._id}/${day.value}`)}
+                onClick={() => navigate(`/TrainerBooked/${trainer._id}/${day.value}`)}
               >
                 <div className="space-y-1">
                   <p className="font-semibold">{day.label}</p>

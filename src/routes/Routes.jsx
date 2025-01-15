@@ -38,11 +38,9 @@ export const router = createBrowserRouter([
         element: <TrainerDetails />,
       },
       {
-        path: '/TrainerBooked',
+        path: '/TrainerBooked/:trainerId/:day',
         element: <TrainerBooked />,
-
       },
-
       {
         path: '/allClasses',
         element: <AllClasses />,
@@ -67,7 +65,7 @@ export const router = createBrowserRouter([
     ],
 
   },
-
+  // _______ DashboardLayout___________
   {
     path: '/dashboard',
     element: <DashboardLayout />,
@@ -95,7 +93,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/dashboard/addNewSlot',
-        element: <AddNewSlot/>,
+        element: <AddNewSlot />,
       }
 
 
