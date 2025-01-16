@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Users, CheckCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
+import useAuth from '../../hooks/useAuth';
 
 const TrainerBooked = () => {
     const { trainerId } = useParams();
+    const navigate = useNavigate();
     const [slotData, setSlotData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedPackage, setSelectedPackage] = useState(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchSlotData = async () => {
@@ -48,12 +53,14 @@ const TrainerBooked = () => {
         {
             name: 'Basic',
             features: ['Access to gym equipment', 'Locker room access', 'Basic fitness assessment'],
-            price: '$30/month'
+            price: 30,
+            displayPrice: '$30/month'
         },
         {
             name: 'Standard',
             features: ['All Basic features', 'Group fitness classes', 'Sauna access', 'Personal locker'],
-            price: '$60/month'
+            price: 60,
+            displayPrice: '$60/month'
         },
         {
             name: 'Premium',
@@ -64,14 +71,29 @@ const TrainerBooked = () => {
                 'Priority class booking',
                 'Premium amenities access'
             ],
-            price: '$100/month'
+            price: 100,
+            displayPrice: '$100/month'
         }
     ];
 
-
     const handleJoinNow = () => {
-        console.log('Booking for trainer:', slotData.trainerName);
+        if (!selectedPackage) {
+            toast.error('Please select a membership package.');
+            return;
+        }
+    
+        navigate('/payment', {
+            state: {
+                trainerName: slotData.trainerName,
+                slotName: slotData.trainerProfile.timeSlot,
+                packageName: selectedPackage.name,
+                price: selectedPackage.price, // Now passing numeric price
+                userName: user.displayName, 
+                userEmail: user.email 
+            }
+        });
     };
+    
 
     return (
         <div className="min-h-screen p-6 bg-gray-50">
@@ -109,28 +131,6 @@ const TrainerBooked = () => {
                     </div>
                 </div>
 
-                {/* Class Info */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-bold mb-4">Class Details</h2>
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-4">
-                            <img
-                                src={slotData.classImage}
-                                alt={slotData.className}
-                                className="w-24 h-24 rounded-lg object-cover"
-                            />
-                            <div>
-                                <h3 className="text-lg font-semibold">{slotData.className}</h3>
-                                <p className="text-sm text-gray-600">{slotData.classDetails}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Users className="w-5 h-5" />
-                            <span>Max Participants: {slotData.maxParticipants}</span>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Membership Packages */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <h2 className="text-xl font-bold mb-4">Membership Packages</h2>
@@ -138,13 +138,13 @@ const TrainerBooked = () => {
                         {packages.map((pkg) => (
                             <div
                                 key={pkg.name}
-                                className="p-4 border rounded-lg bg-white shadow-sm"
+                                className={`p-4 border rounded-lg shadow-sm cursor-pointer ${
+                                    selectedPackage?.name === pkg.name ? 'border-blue-500 bg-blue-50' : ''
+                                }`}
+                                onClick={() => setSelectedPackage(pkg)}
                             >
                                 <h3 className="text-lg font-semibold mb-2">{pkg.name}</h3>
-
-                                {/* Display price here */}
-                                <p className="text-xl font-bold text-gray-900 mb-4">{pkg.price}</p>
-
+                                <p className="text-xl font-bold text-gray-900 mb-4">${pkg.price}/Month</p>
                                 <ul className="space-y-2">
                                     {pkg.features.map((feature, index) => (
                                         <li key={index} className="flex items-start gap-2">
@@ -158,29 +158,13 @@ const TrainerBooked = () => {
                     </div>
                 </div>
 
-
-                {/* Membership Packages  Membership Packages Comes Dynamically from Database */}
-                {/* <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">Membership Package: {slotData.membershipType}</h2>
-          <div className="space-y-4">
-            <div className="flex flex-col gap-2">
-              {slotData.membershipFeatures.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div> */}
-
                 {/* Join Now Button */}
                 <div className="flex justify-center">
                     <button
                         onClick={handleJoinNow}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200"
                     >
-                        Join Now - ${slotData.price}
+                        Join Now
                     </button>
                 </div>
             </div>

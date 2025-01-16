@@ -20,6 +20,7 @@ import AllApprovedTrainer from '../pages/DashboardPages/Admin/allApprovedTrainer
 import AddNewSlot from '../pages/DashboardPages/Trainer/addNewSlot';
 import ForumPage from '../pages/DashboardPages/ForumPage/ForumPage';
 import ActivityLog from '../pages/DashboardPages/Member/activityLog';
+import PaymentPage from '../pages/Payment/payment';
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
 
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <SignUp /> },
+      {
+        path: '/payment',
+        element: <PaymentPage />,
+      },
     ],
 
   },
