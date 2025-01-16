@@ -22,6 +22,7 @@ const AddNewSlot = () => {
     specialInstructions: ''
   });
 
+  // Membership options configuration
   const membershipOptions = [
     {
       type: "Basic Membership",
@@ -52,27 +53,28 @@ const AddNewSlot = () => {
     }
   ];
 
+  // Initial data fetching
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [trainerResponse, classesResponse] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/approvedTrainers/${user.email}`),
+          axios.get(`${import.meta.env.VITE_API_URL}/approvedTrainer/${user.email}`),
           axios.get(`${import.meta.env.VITE_API_URL}/classes`)
         ]);
 
         if (trainerResponse.data.success) {
           setTrainerData(trainerResponse.data.trainer);
         } else {
-          setError('No trainer data found for your email.');
+          throw new Error('No trainer data found for your email.');
         }
 
         if (classesResponse.data.success) {
-          setClasses(classesResponse.data.classes || []); // Extract the classes array
+          setClasses(classesResponse.data.classes || []);
         } else {
-          setError('Failed to load classes.');
+          throw new Error('Failed to load classes.');
         }
       } catch (err) {
-        setError('Error connecting to the server. Please try again.');
+        setError(err.message || 'Error connecting to the server. Please try again.');
         console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
@@ -84,7 +86,7 @@ const AddNewSlot = () => {
     }
   }, [user]);
 
-
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSlotForm(prev => ({
@@ -93,6 +95,113 @@ const AddNewSlot = () => {
     }));
   };
 
+  // Reset form function
+  const resetForm = () => {
+    setSelectedClass(null);
+    setSlotForm({
+      date: '',
+      startTime: '',
+      maxParticipants: 10,
+      membershipType: '',
+      specialInstructions: ''
+    });
+  };
+
+  // Update class with trainer data
+  const updateClassWithTrainer = async (classId) => {
+    try {
+      const updatedClassData = {
+        className: selectedClass.className,
+        details: selectedClass.details,
+        additionalInfo: selectedClass.additionalInfo,
+        image: selectedClass.image,
+        createdAt: selectedClass.createdAt,
+        trainer: {
+          id: trainerData._id,
+          name: trainerData.fullName,
+          email: trainerData.email,
+          profile: {
+            image: trainerData.profileImage,
+            age: trainerData.age,
+            yearsOfExperience: trainerData.yearsOfExperience,
+            sessionDuration: trainerData.sessionDuration,
+            timeSlot: trainerData.timeSlot,
+            certificationNumber: trainerData.certificationNumber,
+            availableDays: trainerData.availableDays,
+            skills: trainerData.skills,
+            socialLinks: trainerData.socialLinks || {},
+            status: trainerData.status
+          }
+        },
+        trainerAssignedAt: new Date()
+      };
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/classes/${classId}`,
+        updatedClassData
+      );
+
+      if (!response.data.success) {
+        throw new Error(response.data.error || 'Failed to update class data');
+      }
+
+      // Update local state
+      setClasses(prevClasses =>
+        prevClasses.map(c =>
+          c._id === classId ? { ...c, ...updatedClassData } : c
+        )
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Error updating class with trainer:', error);
+      throw error;
+    }
+  };
+
+  // Create new slot with updated class data
+  const createSlot = async (selectedMembership) => {
+    const slotData = {
+      // Trainer Information
+      trainerId: trainerData._id,
+      trainerName: trainerData.fullName,
+      trainerEmail: trainerData.email,
+      trainerProfile: {
+        profileImage: trainerData.profileImage,
+        age: trainerData.age,
+        yearsOfExperience: trainerData.yearsOfExperience,
+        sessionDuration: trainerData.sessionDuration,
+        timeSlot: trainerData.timeSlot,
+        certificationNumber: trainerData.certificationNumber,
+        availableDays: trainerData.availableDays,
+        skills: trainerData.skills,
+        socialLinks: trainerData.socialLinks || {},
+        status: trainerData.status
+      },
+      // Class Information
+      classId: selectedClass._id,
+      className: selectedClass.className,
+      classImage: selectedClass.image,
+      classDetails: selectedClass.details,
+      classAdditionalInfo: selectedClass.additionalInfo,
+      // Slot Information
+      ...slotForm,
+      price: selectedMembership.price,
+      membershipFeatures: selectedMembership.features,
+      status: 'available',
+      createdAt: new Date()
+    };
+
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/slots`, slotData);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Failed to create slot');
+    }
+
+    return response.data;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -107,55 +216,18 @@ const AddNewSlot = () => {
     }
 
     try {
+      // First update the class with trainer data
+      await updateClassWithTrainer(selectedClass._id);
+
+      // Then create the slot
       const selectedMembership = membershipOptions.find(m => m.type === slotForm.membershipType);
-      
-      const slotData = {
-        // Trainer Information
-        trainerId: trainerData._id,
-        trainerName: trainerData.fullName,
-        trainerEmail: trainerData.email,
-        trainerProfile: {
-          profileImage: trainerData.profileImage,
-          age: trainerData.age,
-          yearsOfExperience: trainerData.yearsOfExperience,
-          sessionDuration: trainerData.sessionDuration,
-          timeSlot: trainerData.timeSlot,
-          certificationNumber: trainerData.certificationNumber,
-          availableDays: trainerData.availableDays,
-          skills: trainerData.skills,
-          socialLinks: trainerData.socialLinks || {},
-          status: trainerData.status
-        },
-        // Class Information
-        classId: selectedClass._id,
-        className: selectedClass.className,
-        classImage: selectedClass.image,
-        classDetails: selectedClass.details,
-        classAdditionalInfo: selectedClass.additionalInfo,
-        // Slot Information
-        ...slotForm,
-        price: selectedMembership.price,
-        membershipFeatures: selectedMembership.features,
-        status: 'available'
-      };
+      await createSlot(selectedMembership);
 
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/slots`, slotData);
-
-      if (response.data.success) {
-        toast.success('Slot created successfully!');
-        // Reset form
-        setSlotForm({
-          date: '',
-          startTime: '',
-          maxParticipants: 10,
-          membershipType: '',
-          specialInstructions: ''
-        });
-        setSelectedClass(null);
-      }
+      toast.success('Slot created successfully!');
+      resetForm();
     } catch (err) {
       console.error('Error:', err);
-      toast.error(err.response?.data?.message || `Error creating slot: ${err.message}`);
+      toast.error(err.message || 'Error creating slot');
     }
   };
 
@@ -177,7 +249,6 @@ const AddNewSlot = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-8">
-      {/* Trainer Profile Section */}
       {/* Trainer Profile Section */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="border-b pb-4 mb-6">
@@ -346,8 +417,9 @@ const AddNewSlot = () => {
           {classes.map((classItem) => (
             <div
               key={classItem._id}
-              className={`border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer ${selectedClass?._id === classItem._id ? 'ring-2 ring-blue-500' : ''
-                }`}
+              className={`border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer ${
+                selectedClass?._id === classItem._id ? 'ring-2 ring-blue-500' : ''
+              }`}
               onClick={() => setSelectedClass(classItem)}
             >
               <div className="relative">
@@ -356,7 +428,7 @@ const AddNewSlot = () => {
                   alt={classItem.className}
                   className="w-full h-48 object-cover"
                 />
-                {selectedClass?._id === classItem._id && (
+               {selectedClass?._id === classItem._id && (
                   <div className="absolute top-2 right-2 bg-blue-500 text-white p-1 rounded-full">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -494,16 +566,7 @@ const AddNewSlot = () => {
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedClass(null);
-                  setSlotForm({
-                    date: '',
-                    startTime: '',
-                    maxParticipants: 10,
-                    membershipType: '',
-                    specialInstructions: ''
-                  });
-                }}
+                onClick={resetForm}
                 className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel

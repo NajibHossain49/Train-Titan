@@ -28,7 +28,7 @@ const AppliedTrainer = () => {
     }, []);
 
     const handleDetails = (id) => {
-        navigate(`/dashboard/applied-trainer/${id}`);
+        navigate(`/dashboard/applied-trainer/${id}`); //❌ Issue
     };
     
 
@@ -36,7 +36,7 @@ const AppliedTrainer = () => {
 
     return (
         <div className="container mx-auto p-6">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6">Applied Trainers</h1>
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6">All Applied Trainers</h1>
             <div className="overflow-x-auto shadow-lg rounded-lg">
                 <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                     <thead className="bg-gray-100">

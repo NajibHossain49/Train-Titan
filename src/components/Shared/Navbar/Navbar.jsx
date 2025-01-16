@@ -43,7 +43,7 @@ const Navbar = () => {
     },
     {
       path: "/community",   
-      label: "Community",
+      label: "Forum",
       icon: <MessageCircle className="mr-2" size={20} />,  
     },
   ];

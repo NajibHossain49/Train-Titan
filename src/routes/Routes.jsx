@@ -18,6 +18,8 @@ import AppliedTrainer from '../pages/DashboardPages/Admin/appliedTrainer';
 import AppliedTrainerDetails from '../pages/DashboardPages/Admin/AppliedTrainerDetails';
 import AllApprovedTrainer from '../pages/DashboardPages/Admin/allApprovedTrainers';
 import AddNewSlot from '../pages/DashboardPages/Trainer/addNewSlot';
+import ForumPage from '../pages/DashboardPages/ForumPage/ForumPage';
+import ActivityLog from '../pages/DashboardPages/Member/activityLog';
 
 export const router = createBrowserRouter([
   {
@@ -44,8 +46,8 @@ export const router = createBrowserRouter([
       {
         path: '/allClasses',
         element: <AllClasses />,
-      },
-
+      }
+      ,
       {
         path: '/community',
         element: <Community />,
@@ -94,6 +96,14 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/addNewSlot',
         element: <AddNewSlot />,
+      },
+      {
+        path: '/dashboard/ForumPage',
+        element: <ForumPage />,
+      },
+      {
+        path: '/dashboard/activity-log',
+        element: <ActivityLog />,
       }
 
 
