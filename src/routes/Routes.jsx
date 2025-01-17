@@ -22,6 +22,7 @@ import ForumPage from '../pages/DashboardPages/ForumPage/ForumPage';
 import ActivityLog from '../pages/DashboardPages/Member/activityLog';
 import PaymentPage from '../pages/Payment/payment';
 import ManageSlots from '../pages/DashboardPages/Trainer/ManageSlots';
+import Balance from '../pages/DashboardPages/Admin/Balance';
 
 export const router = createBrowserRouter([
   {
@@ -114,6 +115,10 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/ManageSlots',
         element: <ManageSlots />,
+      },
+      {
+        path: '/dashboard/balance',
+        element: <Balance />,
       }
 
 
