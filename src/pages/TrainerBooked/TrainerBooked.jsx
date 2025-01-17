@@ -89,7 +89,10 @@ const TrainerBooked = () => {
                 packageName: selectedPackage.name,
                 price: selectedPackage.price, // Now passing numeric price
                 userName: user.displayName, 
-                userEmail: user.email 
+                userEmail: user.email,
+                classId: slotData.classId, // Passing classId
+                className: slotData.className, // Passing className
+                classImage: slotData.classImage, // Passing classImage 
             }
         });
     };

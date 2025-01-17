@@ -12,12 +12,12 @@ const PaymentForm = ({ paymentDetails }) => {
   const elements = useElements();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
-  const { trainerName, slotName, packageName, price, userName, userEmail } = paymentDetails;
+
+  const { trainerName, slotName, packageName, price, userName, userEmail, classId, className, classImage } = paymentDetails;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     if (!stripe || !elements) {
       return;
     }
@@ -25,20 +25,18 @@ const PaymentForm = ({ paymentDetails }) => {
     setLoading(true);
 
     try {
-      // First, validate the price
+      // Validate the price
       if (!price || isNaN(price) || price <= 0) {
         throw new Error('Invalid price amount');
       }
 
-      // Create payment intent
+      // Step 1: Create Payment Intent
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          price: price // Send price directly, backend will convert to cents
-        }),
+        body: JSON.stringify({ price }),
       });
 
       if (!response.ok) {
@@ -52,14 +50,11 @@ const PaymentForm = ({ paymentDetails }) => {
         throw new Error('No client secret received from the server');
       }
 
-      // Confirm card payment
+      // Step 2: Confirm Card Payment
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
-          billing_details: {
-            name: userName,
-            email: userEmail,
-          },
+          billing_details: { name: userName, email: userEmail },
         },
       });
 
@@ -67,7 +62,7 @@ const PaymentForm = ({ paymentDetails }) => {
         throw new Error(result.error.message);
       }
 
-      // Payment successful, save to database
+      // Step 3: Save Payment to Database
       const savePayment = await fetch(`${import.meta.env.VITE_API_URL}/api/save-payment`, {
         method: 'POST',
         headers: {
@@ -90,9 +85,26 @@ const PaymentForm = ({ paymentDetails }) => {
         throw new Error('Failed to save payment details');
       }
 
-      toast.success('Payment successful!');
-      navigate('/');
-      
+      // Step 4: Increment Booking Count
+      const updateClass = await fetch(`${import.meta.env.VITE_API_URL}/incrementClasses/${classId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingCount: 1,  // Signaling we want to increment by 1
+        }),
+      });
+
+      if (!updateClass.ok) {
+        throw new Error('Failed to update class booking count');
+      }
+
+      // Success
+      toast.success('Payment successful and booking updated!');
+      navigate('/', {
+        state: { classId, className, trainerName, slotName },
+      });
     } catch (error) {
       toast.error(error.message);
       console.error('Payment error:', error);
@@ -121,13 +133,12 @@ const PaymentForm = ({ paymentDetails }) => {
           }}
         />
       </div>
-      
+
       <button
         type="submit"
         disabled={!stripe || loading}
-        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${
-          loading ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
+        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
       >
         {loading ? 'Processing...' : `Pay $${price.toFixed(2)}`}
       </button>
@@ -138,14 +149,19 @@ const PaymentForm = ({ paymentDetails }) => {
 const PaymentPage = () => {
   const location = useLocation();
   const paymentDetails = location.state || {};
-  
+
   // Ensure price is a number
   paymentDetails.price = paymentDetails.price ? parseFloat(paymentDetails.price) : null;
 
   // Validation check for required fields
-  if (!paymentDetails.trainerName || !paymentDetails.slotName || 
-      !paymentDetails.packageName || !paymentDetails.price ||
-      !paymentDetails.userName || !paymentDetails.userEmail) {
+  if (
+    !paymentDetails.trainerName ||
+    !paymentDetails.slotName ||
+    !paymentDetails.packageName ||
+    !paymentDetails.price ||
+    !paymentDetails.userName ||
+    !paymentDetails.userEmail
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center p-6 bg-white rounded-lg shadow-md">
@@ -165,7 +181,7 @@ const PaymentPage = () => {
     <div className="min-h-screen p-6 bg-gray-50">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold mb-4">Payment Details</h2>
-        
+
         {/* Payment Summary */}
         <div className="mb-8 bg-gray-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3">Order Summary</h3>
