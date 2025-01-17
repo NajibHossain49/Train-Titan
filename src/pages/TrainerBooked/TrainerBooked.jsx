@@ -84,6 +84,7 @@ const TrainerBooked = () => {
     
         navigate('/payment', {
             state: {
+                trainerId: trainerId, // Add this line
                 trainerName: slotData.trainerName,
                 slotName: slotData.trainerProfile.timeSlot,
                 packageName: selectedPackage.name,

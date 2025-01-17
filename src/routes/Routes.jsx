@@ -21,6 +21,7 @@ import AddNewSlot from '../pages/DashboardPages/Trainer/addNewSlot';
 import ForumPage from '../pages/DashboardPages/ForumPage/ForumPage';
 import ActivityLog from '../pages/DashboardPages/Member/activityLog';
 import PaymentPage from '../pages/Payment/payment';
+import ManageSlots from '../pages/DashboardPages/Trainer/ManageSlots';
 
 export const router = createBrowserRouter([
   {
@@ -109,6 +110,10 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/activity-log',
         element: <ActivityLog />,
+      },
+      {
+        path: '/dashboard/ManageSlots',
+        element: <ManageSlots />,
       }
 
 

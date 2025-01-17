@@ -7,7 +7,7 @@ const Sidebar = () => {
     { name: 'Applied Trainer', path: '/dashboard/applied-trainer' },
     { name: 'Balance', path: '/dashboard/balance' },
     { name: 'Add New Class', path: '/dashboard/AddNewClass' },
-    { name: 'Manage Slots', path: '/dashboard/manage-slots' },
+    { name: 'Manage Slots', path: '/dashboard/ManageSlots' },
     { name: 'Add New Slot', path: '/dashboard/addNewSlot' },
     { name: 'Add New Forum', path: '/dashboard/ForumPage' },
     { name: 'Activity Log', path: '/dashboard/activity-log' },
