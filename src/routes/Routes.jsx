@@ -8,7 +8,7 @@ import AllTrainer from '../pages/AllTrainer/allTrainer';
 import AllClasses from '../pages/AllClasses/allClasses';
 import DashboardLayout from '../layouts/DashboardLayout'
 import Community from '../pages/Community/Community';
-import Profile from '../pages/Profile/Profile';
+import Profile from '../pages/DashboardPages/Member/Profile';
 import BecomeTrainer from '../pages/BecomeTrainer/BecomeTrainer';
 import TrainerDetails from '../pages/TrainerDetails/TrainerDetails';
 import TrainerBooked from '../pages/TrainerBooked/TrainerBooked';
@@ -55,11 +55,6 @@ export const router = createBrowserRouter([
         path: '/community',
         element: <Community />,
       },
-      {
-        path: '/profile',
-        element: <Profile />,
-      },
-
       {
         path: '/becomeTrainer',
         element: <BecomeTrainer />,
@@ -119,7 +114,11 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/balance',
         element: <Balance />,
-      }
+      },
+      {
+        path: '/dashboard/profile',
+        element: <Profile />,
+      },
 
 
     ],

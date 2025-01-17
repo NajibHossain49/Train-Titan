@@ -55,11 +55,7 @@ const Navbar = () => {
       label: "Dashboard",
       icon: <LayoutDashboard className="mr-2" size={20} />,
     },
-    {
-      path: "/profile",    
-      label: "User Profile",
-      icon: <User className="mr-2" size={20} />, 
-    },
+    
   ];
 
   // Combine links based on authentication status
