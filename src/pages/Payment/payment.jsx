@@ -2,10 +2,19 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 // Initialize Stripe (replace with your publishable key)
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+
+// // Create axios instance with base URL
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_API_URL,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// });
 
 const PaymentForm = ({ paymentDetails }) => {
   const stripe = useStripe();
@@ -13,7 +22,18 @@ const PaymentForm = ({ paymentDetails }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const { trainerName, slotName, packageName, price, userName, userEmail, classId, className, classImage } = paymentDetails;
+  const { 
+    trainerName, 
+    slotName, 
+    packageName, 
+    price, 
+    userName, 
+    userEmail, 
+    classId, 
+    className, 
+    classImage,
+    trainerId 
+  } = paymentDetails;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,20 +51,7 @@ const PaymentForm = ({ paymentDetails }) => {
       }
 
       // Step 1: Create Payment Intent
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/create-payment-intent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ price }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create payment intent');
-      }
-
-      const { clientSecret } = await response.json();
+      const { data: { clientSecret } } = await axios.post(`${import.meta.env.VITE_API_URL}/api/create-payment-intent`, { price });
 
       if (!clientSecret) {
         throw new Error('No client secret received from the server');
@@ -63,42 +70,33 @@ const PaymentForm = ({ paymentDetails }) => {
       }
 
       // Step 3: Save Payment to Database
-      const savePayment = await fetch(`${import.meta.env.VITE_API_URL}/api/save-payment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/save-payment`, {
+        paymentId: result.paymentIntent.id,
+        trainerName,
+        slotName,
+        packageName,
+        price,
+        userName,
+        userEmail,
+        status: 'completed',
+        createdAt: new Date().toISOString(),
+      });
+
+      // Step 4: Update Slot with Customer Information
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/slots/${trainerId}`, {
+        customerInfo: {
+          name: userName,
+          email: userEmail,
           paymentId: result.paymentIntent.id,
-          trainerName,
-          slotName,
           packageName,
-          price,
-          userName,
-          userEmail,
-          status: 'completed',
-          createdAt: new Date().toISOString(),
-        }),
+          paymentDate: new Date().toISOString()
+        }
       });
 
-      if (!savePayment.ok) {
-        throw new Error('Failed to save payment details');
-      }
-
-      // Step 4: Increment Booking Count
-      const updateClass = await fetch(`${import.meta.env.VITE_API_URL}/incrementClasses/${classId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          bookingCount: 1,  // Signaling we want to increment by 1
-        }),
+      // Step 5: Increment Booking Count
+      await axios.patch(`${import.meta.env.VITE_API_URL}/incrementClasses/${classId}`, {
+        bookingCount: 1,
       });
-
-      if (!updateClass.ok) {
-        throw new Error('Failed to update class booking count');
-      }
 
       // Success
       toast.success('Payment successful and booking updated!');
@@ -106,7 +104,8 @@ const PaymentForm = ({ paymentDetails }) => {
         state: { classId, className, trainerName, slotName },
       });
     } catch (error) {
-      toast.error(error.message);
+      const errorMessage = error.response?.data?.error || error.message;
+      toast.error(errorMessage);
       console.error('Payment error:', error);
     } finally {
       setLoading(false);
@@ -137,8 +136,9 @@ const PaymentForm = ({ paymentDetails }) => {
       <button
         type="submit"
         disabled={!stripe || loading}
-        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${
+          loading ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
       >
         {loading ? 'Processing...' : `Pay $${price.toFixed(2)}`}
       </button>
