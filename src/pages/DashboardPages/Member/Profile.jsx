@@ -8,6 +8,7 @@ const Profile = () => {
   const [photoURL, setPhotoURL] = useState(user?.photoURL || '');
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [nameError, setNameError] = useState('');
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -40,7 +41,13 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
+    if (!name) {
+      setNameError('Name is required');
+      return;
+    }
+
     try {
+      setNameError('');
       await updateUserProfile(name, photoURL);
       toast.success('Profile updated successfully!');
       setIsEditing(false);
@@ -88,12 +95,19 @@ const Profile = () => {
           <div className="flex items-center">
             <label className="w-24 text-gray-600 font-medium">Name:</label>
             {isEditing ? (
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={`w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                    nameError ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
+                  }`}
+                />
+                {nameError && (
+                  <p className="text-red-500 text-xs mt-1">{nameError}</p>
+                )}
+              </div>
             ) : (
               <span className="text-gray-800">{user?.displayName || 'N/A'}</span>
             )}

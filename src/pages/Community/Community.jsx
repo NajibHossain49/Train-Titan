@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Clock, User, Tag } from 'lucide-react';
+import { Clock, User, Tag, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const Community = () => {
     const [posts, setPosts] = useState([]);
@@ -24,6 +24,43 @@ const Community = () => {
         }
     };
 
+    const handleVote = async (postId, voteType) => {
+        // Debug logs
+        // console.log(`Vote action triggered - Post ID: ${postId}, Vote Type: ${voteType}`);
+        // console.log('Post details:', posts.find(post => post._id === postId));
+
+        try {
+            await axios.patch(`${import.meta.env.VITE_API_URL}/postsForum/${postId}/vote`, {
+                voteType
+            });
+
+            // Debug log for successful API call
+            // console.log(`Vote API call successful for Post ID: ${postId}`);
+
+            setPosts(currentPosts =>
+                currentPosts.map(post => {
+                    if (post._id === postId) {
+                        const updatedPost = {
+                            ...post,
+                            upvotes: voteType === 'upvote'
+                                ? (post.upvotes || 0) + 1
+                                : (post.upvotes || 0),
+                            downvotes: voteType === 'downvote'
+                                ? (post.downvotes || 0) + 1
+                                : (post.downvotes || 0)
+                        };
+                        // Debug log for state update
+                        // console.log('Updated post data:', updatedPost);
+                        return updatedPost;
+                    }
+                    return post;
+                })
+            );
+        } catch (error) {
+            console.error(`Error voting for Post ID: ${postId}`, error);
+        }
+    };
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -42,7 +79,6 @@ const Community = () => {
                 Community Forum
             </h1>
 
-            {/* Display Posts */}
             <div className="space-y-6">
                 <h2 className="text-2xl font-semibold text-gray-800">Recent Posts</h2>
                 {posts.map(post => (
@@ -58,8 +94,8 @@ const Community = () => {
                         <p className="text-gray-600 mb-4">
                             {post.content}
                         </p>
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                            <div className="flex items-center space-x-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4 text-sm text-gray-500">
                                 <span className="flex items-center">
                                     <User className="w-4 h-4 mr-1" />
                                     {post.author}
@@ -68,17 +104,34 @@ const Community = () => {
                                     <Clock className="w-4 h-4 mr-1" />
                                     {new Date(post.timestamp).toLocaleString()}
                                 </span>
+                                <span className="flex items-center">
+                                    <Tag className="w-4 h-4 mr-1" />
+                                    {post.category}
+                                </span>
                             </div>
-                            <span className="flex items-center">
-                                <Tag className="w-4 h-4 mr-1" />
-                                {post.category}
-                            </span>
+
+                            {/* Voting Section */}
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    onClick={() => handleVote(post._id, 'upvote')}
+                                    className="flex items-center space-x-1 text-gray-600 hover:text-green-600 transition-colors"
+                                >
+                                    <ThumbsUp className="w-4 h-4" />
+                                    <span>{post.upvotes || 0}</span>
+                                </button>
+                                <button
+                                    onClick={() => handleVote(post._id, 'downvote')}
+                                    className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors"
+                                >
+                                    <ThumbsDown className="w-4 h-4" />
+                                    <span>{post.downvotes || 0}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-6">
                 <button
                     onClick={handlePrevPage}
