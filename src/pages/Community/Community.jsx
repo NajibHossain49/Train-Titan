@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Clock, User, Tag, ThumbsUp, ThumbsDown } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Community = () => {
+    const { user } = useAuth();
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -25,17 +28,21 @@ const Community = () => {
     };
 
     const handleVote = async (postId, voteType) => {
-        // Debug logs
-        // console.log(`Vote action triggered - Post ID: ${postId}, Vote Type: ${voteType}`);
-        // console.log('Post details:', posts.find(post => post._id === postId));
+
+
+        // Check if user is logged in
+        if (!user || !user.email) {
+            toast.error('You need to log in to vote!');
+            return;
+        }
 
         try {
             await axios.patch(`${import.meta.env.VITE_API_URL}/postsForum/${postId}/vote`, {
-                voteType
+                voteType,
+                userEmail: user.email,
             });
 
-            // Debug log for successful API call
-            // console.log(`Vote API call successful for Post ID: ${postId}`);
+
 
             setPosts(currentPosts =>
                 currentPosts.map(post => {
@@ -49,8 +56,7 @@ const Community = () => {
                                 ? (post.downvotes || 0) + 1
                                 : (post.downvotes || 0)
                         };
-                        // Debug log for state update
-                        // console.log('Updated post data:', updatedPost);
+
                         return updatedPost;
                     }
                     return post;
