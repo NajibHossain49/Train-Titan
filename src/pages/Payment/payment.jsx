@@ -8,31 +8,36 @@ import toast from 'react-hot-toast';
 // Initialize Stripe (replace with your publishable key)
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
 
-// // Create axios instance with base URL
-// const api = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// });
-
 const PaymentForm = ({ paymentDetails }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const { 
-    trainerName, 
-    slotName, 
-    packageName, 
-    price, 
-    userName, 
-    userEmail, 
-    classId, 
-    className, 
+  const {
+    // Previous fields
+    trainerName,
+    slotName,
+    packageName,
+    price,
+    userName,
+    userEmail,
+    classId,
+    className,
     classImage,
-    trainerId 
+    trainerId,
+    // New fields
+    trainerEmail,
+    trainerProfile,
+    classDetails,
+    classAdditionalInfo,
+    date,
+    startTime,
+    maxParticipants,
+    membershipType,
+    specialInstructions,
+    membershipFeatures,
+    slotStatus
   } = paymentDetails;
 
   const handleSubmit = async (event) => {
@@ -72,6 +77,7 @@ const PaymentForm = ({ paymentDetails }) => {
       // Step 3: Save Payment to Database
       await axios.post(`${import.meta.env.VITE_API_URL}/api/save-payment`, {
         paymentId: result.paymentIntent.id,
+        // Basic payment info
         trainerName,
         slotName,
         packageName,
@@ -80,6 +86,23 @@ const PaymentForm = ({ paymentDetails }) => {
         userEmail,
         status: 'completed',
         createdAt: new Date().toISOString(),
+
+        // Additional trainer and class info
+        trainerId,
+        trainerEmail,
+        trainerProfile,
+        classId,
+        className,
+        classImage,
+        classDetails,
+        classAdditionalInfo,
+        date,
+        startTime,
+        maxParticipants,
+        membershipType,
+        specialInstructions,
+        membershipFeatures,
+        slotStatus
       });
 
       // Step 4: Update Slot with Customer Information
@@ -136,9 +159,8 @@ const PaymentForm = ({ paymentDetails }) => {
       <button
         type="submit"
         disabled={!stripe || loading}
-        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${
-          loading ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
+        className={`w-full bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
       >
         {loading ? 'Processing...' : `Pay $${price.toFixed(2)}`}
       </button>
@@ -153,14 +175,18 @@ const PaymentPage = () => {
   // Ensure price is a number
   paymentDetails.price = paymentDetails.price ? parseFloat(paymentDetails.price) : null;
 
-  // Validation check for required fields
+  // In PaymentPage component, update the validation check:
   if (
     !paymentDetails.trainerName ||
     !paymentDetails.slotName ||
     !paymentDetails.packageName ||
     !paymentDetails.price ||
     !paymentDetails.userName ||
-    !paymentDetails.userEmail
+    !paymentDetails.userEmail ||
+    !paymentDetails.trainerId ||
+    !paymentDetails.trainerEmail ||
+    !paymentDetails.classId ||
+    !paymentDetails.className
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

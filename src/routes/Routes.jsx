@@ -24,6 +24,7 @@ import ActivityLog from '../pages/DashboardPages/Member/activityLog';
 import PaymentPage from '../pages/Payment/payment';
 import ManageSlots from '../pages/DashboardPages/Trainer/ManageSlots';
 import Balance from '../pages/DashboardPages/Admin/Balance';
+import BookedTrainer from '../pages/DashboardPages/Member/bookedTrainer';
 
 export const router = createBrowserRouter([
   {
@@ -123,6 +124,10 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard/profile',
         element: <Profile />,
+      },
+      {
+        path: '/dashboard/booked-trainer', // this is for member
+        element: <BookedTrainer />,
       },
 
 

@@ -81,24 +81,38 @@ const TrainerBooked = () => {
             toast.error('Please select a membership package.');
             return;
         }
-    
+
         navigate('/payment', {
             state: {
-                trainerId: trainerId, // Add this line
+                // Previous data
+                trainerId: trainerId,
                 trainerName: slotData.trainerName,
                 slotName: slotData.trainerProfile.timeSlot,
                 packageName: selectedPackage.name,
-                price: selectedPackage.price, // Now passing numeric price
-                userName: user.displayName, 
+                price: selectedPackage.price,
+                userName: user.displayName,
                 userEmail: user.email,
-                classId: slotData.classId, // Passing classId
-                className: slotData.className, // Passing className
-                classImage: slotData.classImage, // Passing classImage 
+                classId: slotData.classId,
+                className: slotData.className,
+                classImage: slotData.classImage,
+
+                // Additional trainer data
+                trainerEmail: slotData.trainerEmail,
+                trainerProfile: slotData.trainerProfile,
+                classDetails: slotData.classDetails,
+                classAdditionalInfo: slotData.classAdditionalInfo,
+                date: slotData.date,
+                startTime: slotData.startTime,
+                maxParticipants: slotData.maxParticipants,
+                membershipType: slotData.membershipType,
+                specialInstructions: slotData.specialInstructions,
+                membershipFeatures: slotData.membershipFeatures,
+                slotStatus: slotData.status
             }
         });
     };
-    console.log(trainerId);
-    
+    // console.log(trainerId);
+
     return (
         <div className="min-h-screen p-6 bg-gray-50">
             <div className="max-w-4xl mx-auto space-y-6">
@@ -142,9 +156,8 @@ const TrainerBooked = () => {
                         {packages.map((pkg) => (
                             <div
                                 key={pkg.name}
-                                className={`p-4 border rounded-lg shadow-sm cursor-pointer ${
-                                    selectedPackage?.name === pkg.name ? 'border-blue-500 bg-blue-50' : ''
-                                }`}
+                                className={`p-4 border rounded-lg shadow-sm cursor-pointer ${selectedPackage?.name === pkg.name ? 'border-blue-500 bg-blue-50' : ''
+                                    }`}
                                 onClick={() => setSelectedPackage(pkg)}
                             >
                                 <h3 className="text-lg font-semibold mb-2">{pkg.name}</h3>
