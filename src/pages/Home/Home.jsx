@@ -4,6 +4,7 @@ import FeaturedSection from "./HomePageSections/Featured";
 import Reviews from "./HomePageSections/Reviews";
 import ForumPosts from "./HomePageSections/ForumPosts";
 import NewsletterSubscription from "./HomePageSections/NewsletterSubscription";
+import TeamSection from "./HomePageSections/TeamSection";
 
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
       <Reviews />
       <ForumPosts />
       <NewsletterSubscription />
+      <TeamSection />
     </div>
   );
 };
