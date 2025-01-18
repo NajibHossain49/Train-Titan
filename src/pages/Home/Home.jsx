@@ -5,6 +5,7 @@ import Reviews from "./HomePageSections/Reviews";
 import ForumPosts from "./HomePageSections/ForumPosts";
 import NewsletterSubscription from "./HomePageSections/NewsletterSubscription";
 import TeamSection from "./HomePageSections/TeamSection";
+import FeaturedClasses from "./HomePageSections/FeaturedClasses";
 
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
       <BannerSlider />
       <FeaturedSection />
       <AboutSection />
+      <FeaturedClasses />
       <Reviews />
       <ForumPosts />
       <NewsletterSubscription />
