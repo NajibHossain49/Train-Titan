@@ -20,13 +20,13 @@ const TestimonialsCarousel = () => {
   }, []);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => 
+    setCurrentSlide((prev) =>
       prev >= Math.max(0, reviews.length - 3) ? 0 : prev + 1
     );
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => 
+    setCurrentSlide((prev) =>
       prev === 0 ? Math.max(0, reviews.length - 3) : prev - 1
     );
   };
@@ -61,10 +61,10 @@ const TestimonialsCarousel = () => {
       <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
         What Our Clients Say
       </h2>
-      
+
       <div className="relative">
         <div className="overflow-hidden">
-          <div 
+          <div
             className="flex transition-transform duration-500 ease-out gap-6"
             style={{ transform: `translateX(-${currentSlide * (100 / 3)}%)` }}
           >
@@ -87,21 +87,20 @@ const TestimonialsCarousel = () => {
                           <Star
                             key={i}
                             size={14}
-                            className={`${
-                              i < review.rating
-                                ? 'text-yellow-400 fill-yellow-400'
-                                : 'text-gray-300'
-                            }`}
+                            className={`${i < review.rating
+                              ? 'text-yellow-400 fill-yellow-400'
+                              : 'text-gray-300'
+                              }`}
                           />
                         ))}
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* <blockquote className="text-gray-600 italic text-sm mb-4 line-clamp-3">
                     "{review.review}"
                   </blockquote> */}
-                  
+
                   <div className="pt-3 border-t border-gray-100">
                     <p className="text-sm text-gray-500">
                       Trained by <span className="font-medium text-blue-600">{review.trainerName}</span>
@@ -134,11 +133,10 @@ const TestimonialsCarousel = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index * 3)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                Math.floor(currentSlide / 3) === index
-                  ? 'bg-blue-600 w-4'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${Math.floor(currentSlide / 3) === index
+                ? 'bg-blue-600 w-4'
+                : 'bg-gray-300 hover:bg-gray-400'
+                }`}
             />
           ))}
         </div>

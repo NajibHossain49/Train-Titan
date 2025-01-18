@@ -9,7 +9,7 @@ const NewsletterSubscribers = () => {
     const fetchSubscribers = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
-        
+
         if (response.data.success) {
           setSubscribers(response.data.users);
         } else {
@@ -38,7 +38,7 @@ const NewsletterSubscribers = () => {
 
     if (imgError) {
       return (
-        <div 
+        <div
           className="flex items-center justify-center bg-gray-200 rounded-full w-12 h-12 text-gray-600 font-semibold"
         >
           {getInitials(alt)}
@@ -82,8 +82,8 @@ const NewsletterSubscribers = () => {
                 <td className="p-4 border">{subscriber.name}</td>
                 <td className="p-4 border">{subscriber.email}</td>
                 <td className="p-4 border">
-                  <ImageWithFallback 
-                    src={subscriber.photoURL} 
+                  <ImageWithFallback
+                    src={subscriber.photoURL}
                     alt={subscriber.name}
                   />
                 </td>

@@ -43,7 +43,7 @@ const AboutSection = () => {
           ].map((feature, index) => (
             <div 
               key={index}
-              className="group p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-2"
+              className="group p-6 bg-white rounded-2xl shadow-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-2"
             >
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="p-3 bg-gray-50 rounded-full group-hover:scale-110 transition-transform duration-300">

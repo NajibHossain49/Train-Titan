@@ -47,7 +47,11 @@ export const router = createBrowserRouter([
       },
       {
         path: '/TrainerBooked/:trainerId/:day',
-        element: <TrainerBooked />,
+        element: (
+          <PrivateRoute>
+            <TrainerBooked />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/allClasses',
@@ -75,7 +79,11 @@ export const router = createBrowserRouter([
       { path: '/signup', element: <SignUp /> },
       {
         path: '/payment',
-        element: <PaymentPage />,
+        element: (
+          <PrivateRoute>
+            <PaymentPage />
+          </PrivateRoute>
+        ),
       },
     ],
 

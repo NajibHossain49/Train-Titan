@@ -89,7 +89,7 @@ const LatestForumPosts = () => {
         {posts.map((post) => (
           <div
             key={post._id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+            className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden"
           >
             <div className="p-6">
               <div className="flex items-center gap-2 mb-3">

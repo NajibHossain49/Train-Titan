@@ -7,116 +7,98 @@ import {
   Linkedin,
   Send,
   Heart,
-  Globe,
+  Dumbbell,
 } from "lucide-react";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
 
-  const gradients = [
-    "from-pink-500 via-purple-500 to-indigo-500",
-    "from-green-400 via-teal-500 to-blue-600",
-    "from-yellow-400 via-orange-500 to-red-600",
-    "from-cyan-500 via-blue-600 to-purple-700",
-  ];
-
   const socialLinks = [
     {
       Icon: Facebook,
-      color: "text-blue-600",
-      gradient: gradients[0],
+      gradient: "hover:bg-blue-600",
       href: "https://www.facebook.com",
     },
     {
       Icon: Twitter,
-      color: "text-sky-500",
-      gradient: gradients[1],
+      gradient: "hover:bg-sky-500",
       href: "https://www.twitter.com",
     },
     {
       Icon: Instagram,
-      color: "text-pink-600",
-      gradient: gradients[2],
+      gradient: "hover:bg-pink-600",
       href: "https://www.instagram.com",
     },
     {
       Icon: Linkedin,
-      color: "text-blue-700",
-      gradient: gradients[3],
+      gradient: "hover:bg-blue-700",
       href: "https://www.linkedin.com/in/md-najib-hossain/",
     },
   ];
 
-  return (
-    <footer className="relative bg-gray-900 text-white overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-10"></div>
+  const quickLinks = [
+    { name: "Home", path: "/" },
+    { name: "All Trainers", path: "/allTrainer" },
+    { name: "All Classes", path: "/allClasses" },
+    { name: "Our Community", path: "/community" },
 
-      <div className="container mx-auto px-6 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="space-y-4">
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle newsletter submission
+    setEmail("");
+  };
+
+  return (
+    <footer className="bg-gradient-to-br from-gray-600 to-gray-800 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Brand Section */}
+          <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <Globe className="w-10 h-10 text-blue-400 animate-spin-slow" />
-              <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
-                LibraryLink
+              <Dumbbell className="w-8 h-8 text-blue-400 animate-spin-slow" />
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Train-Titan
               </h3>
             </div>
-            <p className="text-gray-300 italic">
-              Navigate the World with Ease ✨
+            <p className="text-gray-300 text-sm">
+              Train Hard, Live Strong. Your journey to fitness begins here. 🏋️‍♀️💪
             </p>
-
-            <div className="flex space-x-4 mt-4">
-              {socialLinks.map(({ Icon, color, gradient, href }) => (
-                <a
-                  key={href}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`
-                                        ${color} hover:scale-110 transform transition-all duration-300
-                                        group relative
-                                    `}
+            {/* Newsletter Form */}
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="flex items-center">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-2 rounded-l-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500 text-sm"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-r-md transition duration-300"
                 >
-                  <div
-                    className={`
-                                        absolute inset-0 bg-gradient-to-r ${gradient} 
-                                        opacity-0 group-hover:opacity-50 
-                                        rounded-full blur-lg transition-all duration-300
-                                    `}
-                  ></div>
-                  <Icon className="w-7 h-7 relative z-10" />
-                </a>
-              ))}
-            </div>
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </form>
           </div>
 
-          {/* Quick Links with Hover Animations */}
+          {/* Quick Links */}
           <div className="space-y-4">
-            <h4
-              className="text-xl font-semibold mb-4 
-                            bg-clip-text text-transparent 
-                            bg-gradient-to-r from-green-400 to-blue-500"
-            >
-              Quick Navigation
+            <h4 className="text-lg font-semibold text-transparent bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text">
+              Quick Links
             </h4>
             <ul className="space-y-2">
-              {[
-                { name: "Home", path: "/" },
-                { name: "All Books", path: "/All-Books" },
-                { name: "Add Book", path: "/Add-Book" },
-                { name: "Borrowed Books", path: "/Borrowed-Books" },
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="
-                                            text-gray-300 
-                                            hover:text-transparent 
-                                            hover:bg-clip-text 
-                                            hover:bg-gradient-to-r 
-                                            from-pink-500 to-purple-600 
-                                            transition-all duration-300
-                                        "
+                    className="text-gray-300 hover:text-white transition duration-300 flex items-center group"
                   >
+                    <span className="w-0 group-hover:w-2 h-0.5 bg-blue-500 mr-2 transition-all duration-300"></span>
                     {link.name}
                   </Link>
                 </li>
@@ -124,84 +106,61 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter with Interactive Design */}
+          {/* Contact Info */}
           <div className="space-y-4">
-            <h4
-              className="text-xl font-semibold mb-4
-                            bg-clip-text text-transparent 
-                            bg-gradient-to-r from-yellow-400 to-red-500"
-            >
-              Stay Connected
+            <h4 className="text-lg font-semibold text-transparent bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text">
+              Contact Us
             </h4>
-            <div className="relative">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email address"
-                className="
-                                    w-full px-4 py-3 rounded-full 
-                                    bg-gray-800 border border-gray-700
-                                    focus:ring-2 focus:ring-blue-500
-                                    text-white placeholder-gray-500
-                                "
-              />
-              <button
-                className="
-                                    absolute right-1 top-1 bottom-1 
-                                    bg-gradient-to-r from-blue-500 to-purple-600 
-                                    hover:from-blue-600 hover:to-purple-700
-                                    text-white px-6 rounded-full
-                                    flex items-center space-x-2
-                                    transition-all duration-300
-                                "
-                onClick={() => {
-                  // Add newsletter signup logic
-                  console.log("Subscribed:", email);
-                  setEmail("");
-                }}
-              >
-                <Send className="w-5 h-5" />
-                <span>Subscribe</span>
-              </button>
+            <div className="space-y-3 text-sm">
+              <p className="flex items-center space-x-2">
+                <span className="text-gray-400">📞</span>
+                <span>+1 (800) 123-4567</span>
+              </p>
+              <p className="flex items-center space-x-2">
+                <span className="text-gray-400">📧</span>
+                <span>info@traintitan.com</span>
+              </p>
+              <p className="flex items-center space-x-2">
+                <span className="text-gray-400">🏠</span>
+                <span>123 Fitness Blvd, Healthy City</span>
+              </p>
             </div>
-            <p className="text-xs text-gray-400 flex items-center">
-              <Heart className="w-4 h-4 mr-2 text-red-500 animate-pulse" />
-              Navigate, Apply, Track – Simplified
-            </p>
+          </div>
+
+          {/* Social Links */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-transparent bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text">
+              Connect With Us
+            </h4>
+            <div className="flex space-x-4">
+              {socialLinks.map(({ Icon, gradient, href }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-2 rounded-full transition-all duration-300 ${gradient} group`}
+                >
+                  <Icon className="w-5 h-5 group-hover:text-white" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Footer Bottom with Gradient Separator */}
-        <div
-          className="
-                    mt-12 pt-6 
-                    border-t border-gray-800
-                    text-center
-                    relative
-                "
-        >
-          <div
-            className="
-                        absolute inset-x-0 top-0 
-                        h-1 
-                        bg-gradient-to-r 
-                        from-transparent via-blue-500 to-transparent 
-                        opacity-50
-                    "
-          ></div>
-          <p
-            className="
-                        text-gray-400 
-                        bg-clip-text 
-                        hover:text-transparent 
-                        hover:bg-gradient-to-r 
-                        from-gray-200 to-gray-50 
-                        transition-all duration-300
-                    "
-          >
-            © 2024: Effortless Library Management, Anytime, Anywhere ❤️
-          </p>
+        {/* Footer Bottom */}
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+            <p className="text-sm text-gray-400">
+              © 2025 Train-Titan. All rights reserved.
+            </p>
+            <div className="flex items-center mt-4 sm:mt-0">
+              <Heart className="w-4 h-4 text-red-500 animate-pulse mr-2" />
+              <p className="text-sm text-gray-400">
+                Strength. Resilience. Results. 💪
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
