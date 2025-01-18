@@ -7,7 +7,7 @@ const MainLayout = () => {
       <header>
         <Navbar />
 
-        <div className="h-20"></div>
+        {/* <div className="h-20"></div> */}
       </header>
       <main className="flex-grow">
         <Outlet />

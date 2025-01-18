@@ -25,6 +25,7 @@ import PaymentPage from '../pages/Payment/payment';
 import ManageSlots from '../pages/DashboardPages/Trainer/ManageSlots';
 import Balance from '../pages/DashboardPages/Admin/Balance';
 import BookedTrainer from '../pages/DashboardPages/Member/bookedTrainer';
+import SpecificForumPost from '../pages/Home/HomePageSections/SpecificForumPost';
 
 export const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
       {
         path: '/community',
         element: <Community />,
+      },
+      {
+        path: '/forum/:id',
+        element: <SpecificForumPost />,
       },
       {
         path: '/becomeTrainer',

@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../../../providers/AuthProvider";
 import {
   Home,
-  BookOpen,
+  Dumbbell,
   PlusCircle,
   LogOut,
   Menu,
@@ -42,9 +42,9 @@ const Navbar = () => {
       icon: <PlusCircle className="mr-2" size={20} />,
     },
     {
-      path: "/community",   
+      path: "/community",
       label: "Forum",
-      icon: <MessageCircle className="mr-2" size={20} />,  
+      icon: <MessageCircle className="mr-2" size={20} />,
     },
   ];
 
@@ -55,7 +55,7 @@ const Navbar = () => {
       label: "Dashboard",
       icon: <LayoutDashboard className="mr-2" size={20} />,
     },
-    
+
   ];
 
   // Combine links based on authentication status
@@ -72,7 +72,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center group">
               <div className="bg-gradient-to-r from-cyan-400 to-blue-600 p-2 rounded-full mr-3 group-hover:rotate-[360deg] transition-transform duration-700 ease-in-out">
-                <BookOpen className="text-white" size={24} />
+                <Dumbbell className="text-white" size={24} />
               </div>
               <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:from-indigo-500 group-hover:to-purple-600 transition-colors duration-500">
                 Train-Titan
@@ -160,9 +160,8 @@ const Navbar = () => {
 
       {/* Slide-out Menu for MD and Smaller Screens */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="h-full overflow-y-auto pb-20">
           <div className="px-4 pt-6">
@@ -184,7 +183,7 @@ const Navbar = () => {
                 onClick={toggleMenu}
               >
                 <div className="bg-gradient-to-r from-cyan-400 to-blue-600 p-2 rounded-full mr-3">
-                  <BookOpen className="text-white" size={24} />
+                  <Dumbbell className="text-white" size={24} />
                 </div>
                 <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">
                   Train-Titan
