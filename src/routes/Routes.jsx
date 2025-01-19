@@ -26,6 +26,7 @@ import ManageSlots from '../pages/DashboardPages/Trainer/ManageSlots';
 import Balance from '../pages/DashboardPages/Admin/Balance';
 import BookedTrainer from '../pages/DashboardPages/Member/bookedTrainer';
 import SpecificForumPost from '../pages/Home/HomePageSections/SpecificForumPost';
+import Dashboard from '../pages/Dashboard/Dashboard';
 
 export const router = createBrowserRouter([
   {
@@ -93,6 +94,15 @@ export const router = createBrowserRouter([
     path: '/dashboard',
     element: <DashboardLayout />,
     children: [
+      {
+        path: '/dashboard',
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
+      }
+      ,
       {
         path: '/dashboard/AddNewClass',
         element: <AddNewClass />,
