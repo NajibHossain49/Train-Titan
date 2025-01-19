@@ -23,7 +23,7 @@ const Dashboard = () => {
 
     return (
         <div className="flex">
-            <main className="flex-1 min-h-screen">
+            <main className="flex-1">
                 <div className="p-4 md:p-8">
                     {/* Header */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
