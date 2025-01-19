@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const { user, updateUserProfile } = useAuth();
@@ -9,6 +10,12 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [nameError, setNameError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial loading
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -46,17 +53,29 @@ const Profile = () => {
       return;
     }
 
-    try {
-      setNameError('');
-      await updateUserProfile(name, photoURL);
-      toast.success('Profile updated successfully!');
-      setIsEditing(false);
-    } catch (error) {
-      toast.error('Failed to update profile.');
+    const result = await Swal.fire({
+      title: 'Save Changes?',
+      text: 'Are you sure you want to update your profile?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#4F46E5',
+      cancelButtonColor: '#EF4444',
+      confirmButtonText: 'Yes, save changes',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setNameError('');
+        await updateUserProfile(name, photoURL);
+        toast.success('Profile updated successfully!');
+        setIsEditing(false);
+      } catch (error) {
+        toast.error('Failed to update profile.');
+      }
     }
   };
 
-  // Format the last login time
   const formatLastLoginTime = (timestamp) => {
     if (!timestamp) return 'N/A';
     const date = new Date(timestamp);
@@ -66,93 +85,129 @@ const Profile = () => {
     }).format(date);
   };
 
-  return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Profile</h1>
-      <div className="flex items-center space-x-6">
-        {/* Profile Picture */}
-        <div className="relative">
-          <img
-            src={photoURL || '/default-avatar.png'}
-            alt="Profile"
-            className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
-          />
-          {isEditing && (
-            <div className="mt-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100"
-              />
-              {uploading && <p className="text-sm text-blue-500 mt-2">Uploading...</p>}
-            </div>
-          )}
-        </div>
-
-        {/* Profile Info */}
-        <div className="flex-1 space-y-4">
-          <div className="flex items-center">
-            <label className="w-24 text-gray-600 font-medium">Name:</label>
-            {isEditing ? (
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={`w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
-                    nameError ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
-                  }`}
-                />
-                {nameError && (
-                  <p className="text-red-500 text-xs mt-1">{nameError}</p>
-                )}
-              </div>
-            ) : (
-              <span className="text-gray-800">{user?.displayName || 'N/A'}</span>
-            )}
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-24 text-gray-600 font-medium">Email:</label>
-            <span className="text-gray-800">{user?.email || 'N/A'}</span>
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-24 text-gray-600 font-medium">Last Login:</label>
-            <span className="text-gray-800">
-              {formatLastLoginTime(user?.metadata?.lastSignInTime)}
-            </span>
-          </div>
-        </div>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600"></div>
       </div>
+    );
+  }
 
-      {/* Action Buttons */}
-      <div className="mt-6 flex space-x-4">
-        {isEditing ? (
-          <>
-            <button
-              onClick={handleSave}
-              disabled={uploading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 disabled:bg-blue-300"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md shadow-sm hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700"
-          >
-            Edit Profile
-          </button>
-        )}
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 px-6 py-4">
+            <h1 className="text-2xl font-bold text-white">Profile Settings</h1>
+          </div>
+
+          <div className="p-6">
+            {/* Profile Content */}
+            <div className="md:flex md:space-x-8">
+              {/* Profile Picture Section */}
+              <div className="flex flex-col items-center space-y-4 mb-6 md:mb-0">
+                <div className="relative group">
+                  <img
+                    src={photoURL || '/default-avatar.png'}
+                    alt="Profile"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-indigo-100 shadow-md transition-transform group-hover:scale-105"
+                  />
+                  {isEditing && (
+                    <div className="mt-4 w-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Change Photo
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-colors"
+                      />
+                      {uploading && (
+                        <div className="mt-2 flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-indigo-600"></div>
+                          <span className="ml-2 text-sm text-indigo-600">Uploading...</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Profile Info Section */}
+              <div className="flex-1 space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    {isEditing ? (
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors ${
+                            nameError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'
+                          }`}
+                          placeholder="Enter your name"
+                        />
+                        {nameError && (
+                          <p className="mt-1 text-sm text-red-500">{nameError}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 font-medium px-4 py-2 bg-gray-50 rounded-lg">
+                        {user?.displayName || 'N/A'}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <p className="text-gray-800 font-medium px-4 py-2 bg-gray-50 rounded-lg">
+                      {user?.email || 'N/A'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Login</label>
+                    <p className="text-gray-800 font-medium px-4 py-2 bg-gray-50 rounded-lg">
+                      {formatLastLoginTime(user?.metadata?.lastSignInTime)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={uploading}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg shadow-sm hover:bg-gray-300 focus:ring-4 focus:ring-gray-100 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-colors"
+                >
+                  Edit Profile
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

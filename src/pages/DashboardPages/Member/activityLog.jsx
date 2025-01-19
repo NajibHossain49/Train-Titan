@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, X } from "lucide-react";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
-
+import { TbFidgetSpinner } from 'react-icons/tb';
 const AppliedTrainer = () => {
     const [trainerData, setTrainerData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -49,8 +49,8 @@ const AppliedTrainer = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center min-h-[400px]">
-                <p className="text-lg text-gray-600">Loading...</p>
+            <div className="min-h-screen flex justify-center items-center">
+                    <TbFidgetSpinner className="w-16 h-16 animate-spin text-indigo-500" />
             </div>
         );
     }
@@ -66,14 +66,14 @@ const AppliedTrainer = () => {
     if (!trainerData) {
         return (
             <div className="flex justify-center items-center min-h-[400px]">
-                <p className="text-lg text-gray-600">No trainer application found</p>
+                <p className="text-lg text-gray-600">You do not have pending status</p>
             </div>
         );
     }
 
     return (
         <div className="container mx-auto p-6">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6">Trainer Application Status</h1>
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6">My Application Status</h1>
             <div className="overflow-x-auto shadow-lg rounded-lg">
                 <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                     <thead className="bg-gradient-to-r from-gray-100 to-gray-200">

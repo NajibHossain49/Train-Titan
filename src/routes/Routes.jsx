@@ -105,52 +105,100 @@ export const router = createBrowserRouter([
       ,
       {
         path: '/dashboard/AddNewClass',
-        element: <AddNewClass />,
+        element: (
+          <PrivateRoute>
+            <AddNewClass />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/newsletter-subscribers',
-        element: <NewsletterSubscribers />,
+        element: (
+          <PrivateRoute>
+            <NewsletterSubscribers />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/applied-trainer',
-        element: <AppliedTrainer />,
+        element: (
+          <PrivateRoute>
+            <AppliedTrainer />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/applied-trainer/:id',
-        element: <AppliedTrainerDetails />,
+        element: (
+          <PrivateRoute>
+            <AppliedTrainerDetails />
+          </PrivateRoute>
+        ),
       }
       ,
       {
         path: '/dashboard/allApprovedTrainers',
-        element: <AllApprovedTrainer />,
+        element: (
+          <PrivateRoute>
+            <AllApprovedTrainer />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/addNewSlot',
-        element: <AddNewSlot />,
+        element: (
+          <PrivateRoute>
+            <AddNewSlot />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/ForumPage',
-        element: <ForumPage />,
+        element: (
+          <PrivateRoute>
+            <ForumPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/activity-log',
-        element: <ActivityLog />,
+        element: (
+          <PrivateRoute>
+            <ActivityLog />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/ManageSlots',
-        element: <ManageSlots />,
+        element: (
+          <PrivateRoute>
+            <ManageSlots />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/balance',
-        element: <Balance />,
+        element: (
+          <PrivateRoute>
+            <Balance />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/profile',
-        element: <Profile />,
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/dashboard/booked-trainer', // this is for member
-        element: <BookedTrainer />,
+        element: (
+          <PrivateRoute>
+            <BookedTrainer />
+          </PrivateRoute>
+        ),
       },
 
 

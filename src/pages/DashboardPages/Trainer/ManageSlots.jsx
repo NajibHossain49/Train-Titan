@@ -4,6 +4,7 @@ import useAuth from '../../../hooks/useAuth';
 import { Trash2 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { TbFidgetSpinner } from 'react-icons/tb';
 
 const fetchSlots = async (email) => {
   try {
@@ -37,7 +38,6 @@ const ManageSlots = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // Query for fetching slots with refetch capability
   const { data: slots = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["slots", user?.email],
     queryFn: () => fetchSlots(user.email),
@@ -46,36 +46,26 @@ const ManageSlots = () => {
     refetchOnWindowFocus: true,
   });
 
-  // Delete mutation with optimistic updates
   const deleteMutation = useMutation({
     mutationFn: deleteSlot,
     onMutate: async (deletedSlotId) => {
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries(["slots", user?.email]);
-
-      // Snapshot the previous value
       const previousSlots = queryClient.getQueryData(["slots", user?.email]);
-
-      // Optimistically update to the new value
       queryClient.setQueryData(["slots", user?.email], old => 
         old?.filter(slot => slot._id !== deletedSlotId)
       );
-
       return { previousSlots };
     },
     onError: (err, variables, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
       queryClient.setQueryData(["slots", user?.email], context.previousSlots);
       toast.error(err.message || 'Failed to delete slot');
     },
     onSuccess: async () => {
       toast.success('Slot deleted successfully');
       setShowDeleteModal(false);
-      // Force refetch to ensure data consistency
       await refetch();
     },
     onSettled: () => {
-      // Always refetch after error or success
       queryClient.invalidateQueries(["slots", user?.email]);
     }
   });
@@ -97,122 +87,165 @@ const ManageSlots = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <p className="text-lg">Loading slots...</p>
+      <div className="min-h-screen flex justify-center items-center bg-gray-50">
+        <div className="p-8 rounded-lg bg-white shadow-lg">
+          <TbFidgetSpinner className="w-16 h-16 animate-spin text-indigo-600" />
+          <p className="mt-4 text-gray-600 font-medium">Loading slots...</p>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded max-w-2xl mx-auto my-4">
-        <p className="font-bold">Error</p>
-        <p>No slots are available for this User at the moment. Please try again later.</p>
+      <div className="min-h-screen flex justify-center items-center p-4">
+        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md max-w-2xl w-full">
+          <div className="flex items-center">
+            <svg className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p className="font-bold">Error</p>
+          </div>
+          <p className="mt-2">No slots are available for this User at the moment. Please try again later.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6">Manage Slots</h2>
-      
-      {slots.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Trainer Name</th>
-                <th className="px-4 py-3 font-semibold">Class Name</th>
-                <th className="px-4 py-3 font-semibold">Slot Date</th>
-                <th className="px-4 py-3 font-semibold">Start Time</th>
-                <th className="px-4 py-3 font-semibold">Max Participants</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold">Price</th>
-                <th className="px-4 py-3 font-semibold">Bookings</th>
-                <th className="px-4 py-3 font-semibold">Membership</th>
-                <th className="px-4 py-3 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {slots.map((slot) => (
-                <tr key={slot._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">{slot.trainerName}</td>
-                  <td className="px-4 py-3">{slot.className}</td>
-                  <td className="px-4 py-3">{new Date(slot.date).toLocaleDateString()}</td>
-                  <td className="px-4 py-3">{slot.startTime}</td>
-                  <td className="px-4 py-3">{slot.maxParticipants} Participants</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      slot.status === 'available' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {slot.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">${slot.price}</td>
-                  <td className="px-4 py-3">
-                    {slot.customers && slot.customers.length > 0 ? (
-                      <div className="space-y-2">
-                        {slot.customers.map((customer, idx) => (
-                          <div key={idx} className="text-xs">
-                            <p className="font-medium">{customer.name}</p>
-                            <p className="text-gray-500">{customer.email}</p>
-                            <p className="text-gray-400">
-                              Booked: {new Date(customer.paymentDate).toLocaleDateString()}
-                            </p>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Manage Slots</h2>
+            <p className="mt-1 text-sm text-gray-500">Manage your training slots and view bookings</p>
+          </div>
+          
+          {slots.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trainer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bookings</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Membership</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {slots.map((slot) => (
+                    <tr key={slot._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{slot.trainerName}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{slot.className}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{new Date(slot.date).toLocaleDateString()}</div>
+                        <div className="text-sm text-gray-500">{slot.startTime}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{slot.maxParticipants} Participants</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                          ${slot.status === 'available' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'}`}>
+                          {slot.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">${slot.price}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {slot.customers && slot.customers.length > 0 ? (
+                          <div className="space-y-3">
+                            {slot.customers.map((customer, idx) => (
+                              <div key={idx} className="bg-gray-50 p-2 rounded-md">
+                                <p className="text-sm font-medium text-gray-900">{customer.name}</p>
+                                <p className="text-xs text-gray-500">{customer.email}</p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  Booked: {new Date(customer.paymentDate).toLocaleDateString()}
+                                </p>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-gray-500 text-xs">No bookings</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">{slot.membershipType}</td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => handleDeleteClick(slot)}
-                      disabled={deleteMutation.isLoading}
-                      className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        ) : (
+                          <span className="text-sm text-gray-500">No bookings</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{slot.membershipType}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <button
+                          onClick={() => handleDeleteClick(slot)}
+                          disabled={deleteMutation.isLoading}
+                          className="inline-flex items-center p-2 border border-transparent rounded-full text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <p className="mt-4 text-lg font-medium text-gray-900">No slots available</p>
+              <p className="mt-2 text-sm text-gray-500">Get started by creating a new slot.</p>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No slots available.</p>
-        </div>
-      )}
+      </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-bold mb-4">Are you sure?</h3>
-            <p className="text-gray-600 mb-6">
-              This action cannot be undone. This will permanently delete the slot
-              and remove all associated booking data.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
-                disabled={deleteMutation.isLoading}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                disabled={deleteMutation.isLoading}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-              >
-                {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
-              </button>
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="mt-4 text-lg font-medium text-gray-900 text-center">Delete Slot</h3>
+              <p className="mt-3 text-sm text-gray-500 text-center">
+                This action cannot be undone. This will permanently delete the slot
+                and remove all associated booking data.
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  disabled={deleteMutation.isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={deleteMutation.isLoading}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                >
+                  {deleteMutation.isLoading ? (
+                    <>
+                      <TbFidgetSpinner className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

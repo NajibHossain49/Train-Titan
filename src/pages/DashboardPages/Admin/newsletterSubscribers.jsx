@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { TbFidgetSpinner } from 'react-icons/tb';
 
 const NewsletterSubscribers = () => {
   const [subscribers, setSubscribers] = useState([]);
@@ -57,7 +58,9 @@ const NewsletterSubscribers = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="min-h-screen flex justify-center items-center">
+      <TbFidgetSpinner className="w-16 h-16 animate-spin text-indigo-500" />
+    </div>;
   }
 
   return (

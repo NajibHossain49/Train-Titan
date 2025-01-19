@@ -87,46 +87,102 @@ const BookedTrainer = () => {
     };
 
     const ReviewModal = () => (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-96 max-w-[90%]">
-                <h3 className="text-xl font-semibold mb-4">Review {selectedTrainer?.trainerName}</h3>
-                <form onSubmit={handleReviewSubmit}>
-                    <div className="mb-4">
-                        <div className="flex gap-2 mb-2">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg transform transition-all">
+                {/* Modal Header */}
+                <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-2xl font-semibold text-gray-800">
+                            Review {selectedTrainer?.trainerName}
+                        </h3>
+                        <button 
+                            onClick={() => setShowReviewModal(false)}
+                            className="text-gray-400 hover:text-gray-500 transition-colors"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Modal Body */}
+                <form onSubmit={handleReviewSubmit} className="p-6 space-y-6">
+                    {/* Rating Section */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Rating
+                        </label>
+                        <div className="flex items-center gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <button
                                     key={star}
                                     type="button"
                                     onClick={() => setRating(star)}
-                                    className={`text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'
-                                        }`}
+                                    className={`text-3xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full p-1
+                                        ${star <= rating ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-300 hover:text-gray-400'}`}
                                 >
                                     ★
                                 </button>
                             ))}
+                            <span className="ml-2 text-sm text-gray-500">
+                                {rating === 0 ? 'Select rating' : `${rating} star${rating !== 1 ? 's' : ''}`}
+                            </span>
                         </div>
                     </div>
-                    <textarea
-                        value={review}
-                        onChange={(e) => setReview(e.target.value)}
-                        className="w-full p-2 border rounded-md mb-4 h-32"
-                        placeholder="Write your review here..."
-                        required
-                    />
-                    <div className="flex justify-end gap-2">
+
+                    {/* Review Text Section */}
+                    <div className="space-y-2">
+                        <label htmlFor="review" className="block text-sm font-medium text-gray-700">
+                            Your Review
+                        </label>
+                        <div className="relative">
+                            <textarea
+                                id="review"
+                                value={review}
+                                onChange={(e) => setReview(e.target.value)}
+                                maxLength={500}
+                                minLength={10}
+                                className="w-full h-32 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors"
+                                placeholder="Share your experience with the trainer (minimum 10 characters)..."
+                                required
+                            />
+                            <div className="absolute bottom-3 right-3 text-sm text-gray-500">
+                                {review.length}/500
+                            </div>
+                        </div>
+                        {review.length > 0 && review.length < 10 && (
+                            <p className="text-sm text-red-500">
+                                Review must be at least 10 characters long
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end pt-4">
                         <button
                             type="button"
                             onClick={() => setShowReviewModal(false)}
-                            className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                            className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            disabled={submitting}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+                            disabled={submitting || !rating || !review.trim() || review.length < 10}
+                            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
                         >
-                            {submitting ? 'Submitting...' : 'Submit Review'}
+                            {submitting ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                    </svg>
+                                    Submitting...
+                                </span>
+                            ) : (
+                                'Submit Review'
+                            )}
                         </button>
                     </div>
                 </form>

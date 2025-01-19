@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { Pie } from "react-chartjs-2";
+import { TbFidgetSpinner } from 'react-icons/tb';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 // Register Chart.js components
@@ -68,9 +69,9 @@ const BalanceDashboard = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-lg">Loading...</div>
-            </div>
+            <div className="min-h-screen flex justify-center items-center">
+                    <TbFidgetSpinner className="w-16 h-16 animate-spin text-indigo-500" />
+                  </div>
         );
     }
 
