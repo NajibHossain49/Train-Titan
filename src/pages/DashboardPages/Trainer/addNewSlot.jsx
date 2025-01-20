@@ -59,7 +59,7 @@ const AddNewSlot = () => {
       try {
         const [trainerResponse, classesResponse] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/approvedTrainer/${user.email}`),
-          axios.get(`${import.meta.env.VITE_API_URL}/classes`)
+          axios.get(`${import.meta.env.VITE_API_URL}/allClasses`)
         ]);
 
         if (trainerResponse.data.success) {
