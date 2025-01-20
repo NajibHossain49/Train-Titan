@@ -2,12 +2,65 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import { toast } from 'react-hot-toast'
+import { useState } from 'react'
 import useAuth from '../../hooks/useAuth'
 import axios from 'axios'
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
   const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    photoURL: ''
+  })
+  const [errors, setErrors] = useState({})
+
+  // Form validation
+  const validateForm = () => {
+    const newErrors = {}
+    if (!formData.name.trim()) newErrors.name = 'Name is required'
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid'
+    }
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
+    }
+    if (!formData.photoURL.trim()) newErrors.photoURL = 'Photo URL is required'
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }))
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      photoURL: ''
+    })
+    setErrors({})
+  }
 
   // Check if user exists in MongoDB
   const checkUserExists = async (email) => {
@@ -24,7 +77,7 @@ const SignUp = () => {
   const saveUser = async (userInfo) => {
     try {
       const userExists = await checkUserExists(userInfo.email)
-      
+
       if (!userExists) {
         const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users`, userInfo)
         return data.insertedId
@@ -39,31 +92,31 @@ const SignUp = () => {
   // form submit handler
   const handleSubmit = async event => {
     event.preventDefault()
-    const form = event.target
-    const name = form.name.value
-    const email = form.email.value
-    const password = form.password.value
-    const photoURL = form.photoURL.value
+
+    if (!validateForm()) {
+      toast.error('Please fill all required fields correctly!')
+      return
+    }
 
     try {
       // Check if user exists in MongoDB first
-      const userExists = await checkUserExists(email)
+      const userExists = await checkUserExists(formData.email)
       if (userExists) {
         toast.error('Email already registered! Please login instead.')
         return
       }
 
       // 1. Create user in Firebase
-      const result = await createUser(email, password)
+      const result = await createUser(formData.email, formData.password)
 
       // 2. Update user profile
-      await updateUserProfile(name, photoURL)
+      await updateUserProfile(formData.name, formData.photoURL)
 
       // 3. Save user to MongoDB
       const userInfo = {
-        name,
-        email,
-        photoURL,
+        name: formData.name,
+        email: formData.email,
+        photoURL: formData.photoURL,
         createdAt: new Date(),
         role: 'user'
       }
@@ -71,12 +124,14 @@ const SignUp = () => {
       const saved = await saveUser(userInfo)
 
       if (saved) {
+        resetForm()
         navigate('/')
         toast.success('Signup Successful!')
       }
 
     } catch (err) {
       console.log(err)
+      resetForm()
       if (err.code === 'auth/email-already-in-use') {
         toast.error('Email already registered! Please login instead.')
       } else {
@@ -89,8 +144,7 @@ const SignUp = () => {
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithGoogle()
-      
-      // Save Google user to MongoDB only if doesn't exist
+
       const userInfo = {
         name: result.user.displayName,
         email: result.user.email,
@@ -113,109 +167,133 @@ const SignUp = () => {
   }
 
   return (
-    <div className='flex justify-center items-center min-h-screen bg-white'>
-      <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
+    <div className='flex justify-center items-center min-h-screen bg-gray-50'>
+      <div className='w-full max-w-md p-8 rounded-2xl shadow-xl bg-white'>
         <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Sign Up</h1>
-          <p className='text-sm text-gray-400'>Welcome to TrainTitan</p>
+          <h1 className='text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+            Sign Up
+          </h1>
+          <p className='mt-2 text-sm text-gray-500'>
+            Join TrainTitan today and start your journey
+          </p>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          noValidate=''
-          className='space-y-6 ng-untouched ng-pristine ng-valid'
-        >
-          <div className='space-y-4'>
-            <div>
-              <label htmlFor='name' className='block mb-2 text-sm'>
-                Name
-              </label>
-              <input
-                type='text'
-                name='name'
-                id='name'
-                required
-                placeholder='Enter Your Name Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
-            <div>
-              <label htmlFor='email' className='block mb-2 text-sm'>
-                Email address
-              </label>
-              <input
-                type='email'
-                name='email'
-                id='email'
-                required
-                placeholder='Enter Your Email Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
-            <div>
-              <label htmlFor='photoURL' className='block mb-2 text-sm'>
-                Photo URL
-              </label>
-              <input
-                type='url'
-                name='photoURL'
-                id='photoURL'
-                required
-                placeholder='Enter Your Photo URL Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
-            <div>
-              <div className='flex justify-between'>
-                <label htmlFor='password' className='text-sm mb-2'>
-                  Password
-                </label>
-              </div>
-              <input
-                type='password'
-                name='password'
-                autoComplete='new-password'
-                id='password'
-                required
-                placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
+
+        <form onSubmit={handleSubmit} className='space-y-5'>
+          <div>
+            <label htmlFor='name' className='text-sm font-medium text-gray-700'>
+              Name
+            </label>
+            <input
+              type='text'
+              name='name'
+              id='name'
+              value={formData.name}
+              onChange={handleInputChange}
+              className={`mt-1 w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-200'
+                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+              placeholder='Enter your name'
+            />
+            {errors.name && (
+              <p className='mt-1 text-sm text-red-500'>{errors.name}</p>
+            )}
           </div>
 
           <div>
-            <button
-              type='submit'
-              className='bg-gradient-to-r from-blue-500 to-purple-600 w-full rounded-md py-3 text-white'
-            >
-              {loading ? (
-                <TbFidgetSpinner className='animate-spin m-auto' />
-              ) : (
-                'Continue'
-              )}
-            </button>
+            <label htmlFor='email' className='text-sm font-medium text-gray-700'>
+              Email address
+            </label>
+            <input
+              type='email'
+              name='email'
+              id='email'
+              value={formData.email}
+              onChange={handleInputChange}
+              className={`mt-1 w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-200'
+                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+              placeholder='Enter your email'
+            />
+            {errors.email && (
+              <p className='mt-1 text-sm text-red-500'>{errors.email}</p>
+            )}
           </div>
+
+          <div>
+            <label htmlFor='photoURL' className='text-sm font-medium text-gray-700'>
+              Photo URL
+            </label>
+            <input
+              type='url'
+              name='photoURL'
+              id='photoURL'
+              value={formData.photoURL}
+              onChange={handleInputChange}
+              className={`mt-1 w-full px-4 py-3 rounded-lg border ${errors.photoURL ? 'border-red-500' : 'border-gray-200'
+                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+              placeholder='Enter photo URL'
+            />
+            {errors.photoURL && (
+              <p className='mt-1 text-sm text-red-500'>{errors.photoURL}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor='password' className='text-sm font-medium text-gray-700'>
+              Password
+            </label>
+            <input
+              type='password'
+              name='password'
+              id='password'
+              value={formData.password}
+              onChange={handleInputChange}
+              className={`mt-1 w-full px-4 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-200'
+                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+              placeholder='Create a password'
+              autoComplete='new-password'
+            />
+            {errors.password && (
+              <p className='mt-1 text-sm text-red-500'>{errors.password}</p>
+            )}
+          </div>
+
+          <button
+            type='submit'
+            disabled={loading}
+            className='w-full py-3 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50'
+          >
+            {loading ? (
+              <TbFidgetSpinner className='animate-spin m-auto text-2xl' />
+            ) : (
+              'Create Account'
+            )}
+          </button>
         </form>
-        <div className='flex items-center pt-4 space-x-1'>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
-          <p className='px-3 text-sm dark:text-gray-400'>
-            Signup with social accounts
-          </p>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
+
+        <div className='relative my-6'>
+          <div className='absolute inset-0 flex items-center'>
+            <div className='w-full border-t border-gray-200'></div>
+          </div>
+          <div className='relative flex justify-center text-sm'>
+            <span className='px-2 bg-white text-gray-500'>Or continue with</span>
+          </div>
         </div>
-        <div
+
+        <button
           onClick={handleGoogleSignIn}
-          className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'
+          disabled={loading}
+          className='w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
         >
-          <FcGoogle size={32} />
-          <p>Continue with Google</p>
-        </div>
-        <p className='px-6 text-sm text-center text-gray-400'>
+          <FcGoogle size={24} />
+          <span className='text-gray-700 font-medium'>Continue with Google</span>
+        </button>
+
+        <p className='mt-6 text-center text-sm text-gray-500'>
           Already have an account?{' '}
           <Link
             to='/login'
-            className='hover:underline hover:text-lime-500 text-gray-600'
+            className='font-medium text-blue-600 hover:text-blue-500 transition-colors'
           >
-            Login
+            Log in
           </Link>
         </p>
       </div>

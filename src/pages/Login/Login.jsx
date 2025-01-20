@@ -8,7 +8,8 @@ import toast from "react-hot-toast";
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location?.state || "/";
+  const from = location?.state?.from?.pathname || "/";
+   
   console.log(from);
   const { signIn, signInWithGoogle } = useContext(AuthContext);
 
