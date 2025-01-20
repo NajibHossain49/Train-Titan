@@ -9,6 +9,33 @@ const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
   const navigate = useNavigate()
 
+  // Check if user exists in MongoDB
+  const checkUserExists = async (email) => {
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/users/exist/${email}`)
+      return data.exists
+    } catch (err) {
+      console.log(err)
+      return false
+    }
+  }
+
+  // Save user to MongoDB if doesn't exist
+  const saveUser = async (userInfo) => {
+    try {
+      const userExists = await checkUserExists(userInfo.email)
+      
+      if (!userExists) {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users`, userInfo)
+        return data.insertedId
+      }
+      return true
+    } catch (err) {
+      console.log(err)
+      return false
+    }
+  }
+
   // form submit handler
   const handleSubmit = async event => {
     event.preventDefault()
@@ -19,6 +46,13 @@ const SignUp = () => {
     const photoURL = form.photoURL.value
 
     try {
+      // Check if user exists in MongoDB first
+      const userExists = await checkUserExists(email)
+      if (userExists) {
+        toast.error('Email already registered! Please login instead.')
+        return
+      }
+
       // 1. Create user in Firebase
       const result = await createUser(email, password)
 
@@ -34,16 +68,20 @@ const SignUp = () => {
         role: 'user'
       }
 
-      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users`, userInfo)
+      const saved = await saveUser(userInfo)
 
-      if (data.insertedId) {
+      if (saved) {
         navigate('/')
         toast.success('Signup Successful!')
       }
 
     } catch (err) {
       console.log(err)
-      toast.error(err?.message || 'Something went wrong!')
+      if (err.code === 'auth/email-already-in-use') {
+        toast.error('Email already registered! Please login instead.')
+      } else {
+        toast.error(err?.message || 'Something went wrong!')
+      }
     }
   }
 
@@ -52,7 +90,7 @@ const SignUp = () => {
     try {
       const result = await signInWithGoogle()
       
-      // Save Google user to MongoDB
+      // Save Google user to MongoDB only if doesn't exist
       const userInfo = {
         name: result.user.displayName,
         email: result.user.email,
@@ -61,10 +99,9 @@ const SignUp = () => {
         role: 'user'
       }
 
-      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/users`, userInfo);
+      const saved = await saveUser(userInfo)
 
-
-      if (data.insertedId) {
+      if (saved) {
         navigate('/')
         toast.success('Google Sign-in Successful!')
       }

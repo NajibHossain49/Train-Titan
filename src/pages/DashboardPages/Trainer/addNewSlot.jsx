@@ -59,6 +59,7 @@ const AddNewSlot = () => {
       try {
         const [trainerResponse, classesResponse] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/approvedTrainer/${user.email}`),
+          // Endpoint for getting all classes without pagination
           axios.get(`${import.meta.env.VITE_API_URL}/allClasses`)
         ]);
 
