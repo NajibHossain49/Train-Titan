@@ -4,6 +4,16 @@ import { Clock, User, Tag, ThumbsUp, ThumbsDown } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 
+const RoleBadge = ({ role }) => {
+  if (!role || !['admin', 'trainer'].includes(role.toLowerCase())) return null;
+  
+  return (
+    <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded bg-blue-100 text-blue-800 capitalize">
+      {role}
+    </span>
+  );
+};
+
 const Community = () => {
     const { user } = useAuth();
     const [posts, setPosts] = useState([]);
@@ -112,6 +122,7 @@ const Community = () => {
                                     <span className="flex items-center">
                                         <User className="w-4 h-4 mr-1" />
                                         <span className="truncate max-w-[150px]">{post.author}</span>
+                                        <RoleBadge role={post.role} />
                                     </span>
                                     <span className="flex items-center">
                                         <Clock className="w-4 h-4 mr-1" />
