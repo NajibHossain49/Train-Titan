@@ -134,20 +134,29 @@ The **Member** has access to their personal details, application status, and tra
 
 ---
 
-# User Roles
+## ⚙️ Installation and Setup
 
-### Admin
-- **Email:** ```admin@traintitangym.com```
-- **Password:** ```admin123```
+To get started with the project, follow these steps:
 
-### Trainer
-- **Email:** ```trainer@traintitangym.com```
-- **Password:** ```trainer123```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/NajibHossain49/Train-Titan.git
 
-### Features Available by Role:
-- **Admin:** Full control over the platform (manage users, set up goals, etc.).
-- **Trainer:** Can interact with and support users but with limited administrative access.
-- **User:** Can interact and has access to their personal details.
+   cd Train-Titan
+   
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+---
 
 
 
