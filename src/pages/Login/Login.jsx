@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
-   
+
   console.log(from);
   const { signIn, signInWithGoogle } = useContext(AuthContext);
 
@@ -153,7 +153,7 @@ const Login = () => {
             </div>
 
             {/* Confirm Password (optional) */}
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="flex justify-between">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-600 "
@@ -170,7 +170,7 @@ const Login = () => {
                 className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg    focus:border-blue-400 focus:ring-opacity-40  focus:outline-none focus:ring focus:ring-blue-300"
                 type="password"
               />
-            </div>
+            </div> */}
 
             <div className="mt-6">
               <button
