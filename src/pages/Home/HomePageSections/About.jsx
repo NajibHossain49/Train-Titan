@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Activity, Users, Target } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AboutSection = () => {
   return (
@@ -16,8 +17,8 @@ const AboutSection = () => {
             Leading the Change in Fitness Innovation
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We're revolutionizing fitness by merging cutting-edge technology with genuine passion for wellness. 
-            Our platform empowers your journey to better health through intelligent tracking, personalized guidance, 
+            We're revolutionizing fitness by merging cutting-edge technology with genuine passion for wellness.
+            Our platform empowers your journey to better health through intelligent tracking, personalized guidance,
             and vibrant community support.
           </p>
         </div>
@@ -41,7 +42,7 @@ const AboutSection = () => {
               description: "Visual progress tracking with detailed insights and achievements"
             }
           ].map((feature, index) => (
-            <div 
+            <div
               key={index}
               className="group p-6 bg-white rounded-2xl shadow-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-2"
             >
@@ -62,55 +63,63 @@ const AboutSection = () => {
 
         {/* Main Content Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8">
-  <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
-    <h3 className="text-2xl font-bold text-gray-800 mb-4">
-      Empowering Health Through Technology
-    </h3>
-    <p className="text-gray-600 leading-relaxed">
-      Unlock the future of fitness with AI-powered training plans. Our platform offers real-time analytics, helping you fine-tune every workout for maximum results.
-    </p>
-    <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-      Learn more <ArrowRight className="w-4 h-4 ml-2" />
-    </button>
-  </div>
+          <div className="space-y-8">
+            <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Empowering Health Through Technology
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Unlock the future of fitness with AI-powered training plans. Our platform offers real-time analytics, helping you fine-tune every workout for maximum results.
+              </p>
+              <Link to="/community">
+                <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                  Learn more <ArrowRight className="w-4 h-4 ml-2" />
+                </button>
+              </Link>
+            </div>
 
-  <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
-    <h3 className="text-2xl font-bold text-gray-800 mb-4">
-      Join a Fitness-Focused Community
-    </h3>
-    <p className="text-gray-600 leading-relaxed">
-      Be part of a vibrant community that motivates and encourages you. Engage with others on their fitness journeys, share tips, and celebrate victories together.
-    </p>
-    <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-      Join the community <ArrowRight className="w-4 h-4 ml-2" />
-    </button>
-  </div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Join a Fitness-Focused Community
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Be part of a vibrant community that motivates and encourages you. Engage with others on their fitness journeys, share tips, and celebrate victories together.
+              </p>
+              <Link to="/community">
+                <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                  Join the community <ArrowRight className="w-4 h-4 ml-2" />
+                </button>
+              </Link>
+            </div>
 
-  <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
-    <h3 className="text-2xl font-bold text-gray-800 mb-4">
-      Tailored Fitness Plans for Every Goal
-    </h3>
-    <p className="text-gray-600 leading-relaxed">
-      Whether you’re looking to build strength, improve endurance, or lose weight, our personalized workout plans cater to all fitness levels and goals.
-    </p>
-    <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-      Explore your plan <ArrowRight className="w-4 h-4 ml-2" />
-    </button>
-  </div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Tailored Fitness Plans for Every Goal
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Whether you’re looking to build strength, improve endurance, or lose weight, our personalized workout plans cater to all fitness levels and goals.
+              </p>
+              <Link to="/community">
+                <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                  Explore your plan <ArrowRight className="w-4 h-4 ml-2" />
+                </button>
+              </Link>
+            </div>
 
-  <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
-    <h3 className="text-2xl font-bold text-gray-800 mb-4">
-      Progress at Your Own Pace
-    </h3>
-    <p className="text-gray-600 leading-relaxed">
-      Track your progress with detailed insights and achieve your fitness milestones. Our platform adjusts to your pace, helping you stay on track for continuous improvement.
-    </p>
-    <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-      Start tracking <ArrowRight className="w-4 h-4 ml-2" />
-    </button>
-  </div>
-</div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Progress at Your Own Pace
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Track your progress with detailed insights and achieve your fitness milestones. Our platform adjusts to your pace, helping you stay on track for continuous improvement.
+              </p>
+              <Link to="/community">
+                <button className="mt-4 flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                  Start tracking <ArrowRight className="w-4 h-4 ml-2" />
+                </button>
+              </Link>
+            </div>
+          </div>
 
 
           <div className="relative group h-full">
