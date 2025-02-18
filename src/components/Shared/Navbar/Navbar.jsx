@@ -55,14 +55,13 @@ const Navbar = () => {
       label: "Dashboard",
       icon: <LayoutDashboard className="mr-2" size={20} />,
     },
-
   ];
 
   // Combine links based on authentication status
   const NavLinks = user ? [...baseNavLinks, ...authenticatedLinks] : baseNavLinks;
 
   return (
-    <nav className="bg-gradient-to-r from-blue-100 via-purple-100 to-indigo-200 shadow-sm relative">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-100 via-purple-100 to-indigo-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Decorative Wave Background */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 opacity-80"></div>
