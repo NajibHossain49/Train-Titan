@@ -42,9 +42,9 @@ const TeamSection = () => {
           {trainers.slice(0, 3).map((trainer) => (
             <div
               key={trainer._id}
-              className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col h-full"
             >
-              <div className="relative h-64">
+              <div className="relative h-64 flex-shrink-0">
                 {trainer.profileImage ? (
                   <img
                     src={trainer.profileImage}
@@ -59,12 +59,12 @@ const TeamSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+              <div className="p-6 flex-grow flex flex-col">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">
                   {trainer.fullName}
                 </h3>
                 
-                <div className="space-y-4">
+                <div className="space-y-4 flex-grow">
                   <div>
                     <h4 className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">
                       Specializations
